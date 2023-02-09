@@ -1,0 +1,7 @@
+.env
+.editorconfig
+package-lock.json
+node_modules/
+.nyc_output
+coverage
+build/
