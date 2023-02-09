@@ -6,6 +6,8 @@ export const testEnvironmentVariable =
 process.env.TEST_ENV_VARIABLE;
 
 export const nodeEnv = process.env.NODE_ENV;
+export const baseUrl = process.env.BASE_URL;
+export const staticPath = process.env.STATIC_PATH;
 
 //postgres
 export const connectionString = process.env.CONNECTION_STRING;

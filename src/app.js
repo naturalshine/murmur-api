@@ -14,6 +14,8 @@ import fileRouter from './routes/file.route';
 
 const app = express();
 
+global.__basedir = __dirname;
+
 app.use(logger('dev'));
 
 app.use(bodyParser.json({ limit: '100mb' }));
@@ -35,7 +37,7 @@ app.use(
 
 app.use('/v1/media', packRouter, videoRouter, sampleRouter);
 app.use('/v1/api', murmurRouter);
-app.use('v1/storage', fileRouter);
+app.use('/storage', fileRouter);
 app.use('/v1', indexRouter);
 
 app.use((err, req, res, next) => {

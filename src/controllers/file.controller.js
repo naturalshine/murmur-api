@@ -1,4 +1,9 @@
+import fs from 'fs';
 import { uploadFileMiddleware } from "../middleware/upload";
+import { 
+    baseUrl,
+    staticPath     
+} from "../settings";
 
 export const uploadFile = async (req, res) => {
   try {
@@ -40,7 +45,7 @@ export const getListFiles = (req, res) => {
     files.forEach((file) => {
       fileInfos.push({
         name: file,
-        url: baseUrl + file,
+        url: baseUrl + staticPath + file,
       });
     });
 
@@ -48,6 +53,7 @@ export const getListFiles = (req, res) => {
   });
 };
 
+/*
 export const downloadFile = (req, res) => {
   const fileName = req.params.name;
   const directoryPath = __basedir + "/resources/static/assets/uploads/";
@@ -59,4 +65,4 @@ export const downloadFile = (req, res) => {
       });
     }
   });
-};
+};*/

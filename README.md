@@ -5,6 +5,7 @@
 ### VIDEO
 
 #### CREATE & UPLOAD: 
+Implemented:
 1. Name video with random id + user wallet
 2. Upload video and return file name (should be same)
 3. Name audio file same name as video 
@@ -13,6 +14,11 @@
 6. Upload image
 7. Insert names / locations into metadata
 8. Write metadata to server
+
+TODO:
+WRITE TESTS
+
+TODO:
 9. Create media on web3.storage
 10. Create metadata in tableland
 11. Mint NFT
