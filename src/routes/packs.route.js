@@ -5,8 +5,11 @@ import {
     getSinglePack,
     updateSamplePack,
     deleteSamplePack,
+    deleteAllPacks,
     insertSamplePack,
-    deleteAllPacks
+    deleteAllPacks,
+    createPackNft, 
+    tablelandPackTable
   } from "../controllers/packs.controller";
   
 import { authenticateToken } from "../middleware/auth";
@@ -16,6 +19,10 @@ const packRouter = express.Router();
 packRouter.get("/packs", authenticateToken, getSamplePacks);
 
 packRouter.get("/packs/:id", authenticateToken, getSinglePack);
+
+packRouter.post("/packs/nft", authenticateToken, createPackNft);
+
+packRouter.post("/packs/tableland/create", authenticateToken, tablelandPackTable)
 
 packRouter.post("/packs", authenticateToken, insertSamplePack);
 

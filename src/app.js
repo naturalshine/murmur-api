@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
+import './fetch-polyfill'
 import indexRouter from './routes';
 import murmurRouter from './routes/murmur.route';
 import sampleRouter from './routes/sample.route';

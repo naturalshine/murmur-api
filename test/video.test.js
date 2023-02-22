@@ -105,7 +105,7 @@ describe('Videos', () => {
 
   it('creates web3 video', done => {
       const data = { 
-        title: 'Claire', 
+        title: 'Claire the sixth', 
         description: 'video description', 
         image: '',
         video: '',
@@ -142,7 +142,7 @@ describe('Videos', () => {
         .expect(200)
         .end((err, res) => {
         expect(res.status).to.equal(200);
-        expect(res.body.message).to.be.instanceOf(Object);
+        expect(res.body.message[0]).to.be.instanceOf(Object);
         expect(res.body.message[0]).to.have.property('id');
         expect(res.body.message[0]).to.have.property('title', data.title);
         expect(res.body.message[0]).to.have.property('description', data.description);

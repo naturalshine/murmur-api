@@ -1,6 +1,13 @@
 // ./src/controllers/sample.controller.js
 
 import MurmurModel from "../models/murmur.model";
+import { createQueryString, createColValArr } from "../utils/queryHelper"
+import { 
+          createSample, 
+          createSampleTable,
+       } from "../services/samples";
+import { tablelandSamplePrefix } from '../settings';
+
 const sampleModel = new MurmurModel('samples');
 
 /**
@@ -46,9 +53,19 @@ export const getSingleSample = async (req, res) => {
 export const insertSample = async (req, res) => {
     try {
       console.log(req.body)
-      const columns = req.body.columns;
-      const values = req.body.values;
-      const data = await sampleModel.insertWithReturn(columns, values);
+      if (req.body.authorship){
+        req.body.authorship = JSON.stringify(req.body.authorship[0]);
+      }
+      if(req.body.asmr_sounds){
+        req.body.asmr_sounds = JSON.stringify(req.body.asmr_sounds[0]);
+      }
+      if(req.body.keywords){
+        req.body.keywords = JSON.stringify(req.body.keywords[0]);
+      }
+      let [colString, valString] = await createColValArr(req.body)
+      console.log(colString, valString);
+      const data = await videoModel.insertWithReturn(colString, valString);
+
       res.status(201).json({
         message: data.rows
       });
@@ -66,9 +83,10 @@ export const insertSample = async (req, res) => {
 
 export const updateSample = async (req, res) => {
     try {
-      const columns = req.body.columns;
-      const values = req.body.values;
-      const data = await sampleModel.update(columns, values, req.params.id);
+
+      let queryString = await createQueryString(req.data);
+      const data = await sampleModel.update(queryString, req.params.id);
+
       res.status(200).json({
         message: data.rows
       });
@@ -112,4 +130,54 @@ export const deleteAllSamples = async (req, res) => {
     });
   }
 };
+
+/**
+ * create video on web3 storage
+ */
+export const createSampleNft = async (req, res) => {
+  try {
+
+    const data = await createSample(req.body);
+    
+    if(!data.status){
+      throw new Error("Sample failed : " + data.message);
+    }
+
+    console.log("DATA => ", data)
+
+
+    res.status(200).json({
+      message: data.message
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      message: err
+    });
+  }
+};
+
+/**
+ * Create tableland table
+ */
+export const tablelandSampleTable = async (req, res) => {
+  try {
+
+    const data = await createSampleTable(tablelandSamplePrefix, req.body);
+    
+    if(!data.status){
+      throw new Error("tableland creation failed : " + data.message);
+    }
+
+    res.status(200).json({
+      message: data.rows
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      message: err
+    });
+  }
+};
+
 

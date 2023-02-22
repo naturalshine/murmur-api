@@ -32,7 +32,6 @@ export const connectTableland = async(network) => {
 // create table
 export const createTable = async (signer, prefix, colString) => {
     try{
-        console.log("PRE DB");
         const db = new Database({
           signer
         });
@@ -54,7 +53,7 @@ export const createTable = async (signer, prefix, colString) => {
 
         return{
             status: false, 
-            message: err.stack
+            message: err
         }
     }
 }
@@ -79,17 +78,18 @@ export const insertTable = async(network, tableName, colString, valArr) => {
         const db = new Database({ signer });
         
         // Insert a row into the table
-        const { success, meta } = await db.prepare(`INSERT INTO ${tableName} (${colString}) VALUES (?, ?, ?, ?, ?, ?);`)
+        const { meta: insert } = await db.prepare(`INSERT INTO ${tableName} (${colString}) VALUES (?, ?, ?, ?, ?, ?);`)
         .bind(valArr[0], valArr[1], valArr[2], valArr[3], valArr[4], valArr[5])
         .run();
 
-        console.log("success =>", success);
+        console.log("duration =>", insert.duration)
 
-        console.log("meta =>", meta);
-        
+        // Wait for transaction finality
+        await insert.txn?.wait();
+
         return {
-            status: success,
-            message: "data inserted"    
+            status: true,
+            message: "Insert complete"  
         }
     } catch (err){
         console.log(err);
@@ -106,64 +106,55 @@ export const readTable = async(network, tableName, query, valArr) => {
     try{
 
         console.log("read only " + network);
-        // "read only goerli"
 
-        const db = Database.readOnly(5);
-        // saw some ex with string network so tried this too with same
-        // results: 
-        //const db = Database.readOnly( network ); // "goerli"
-
-        const { results, success, meta } = await db
-        .prepare(`SELECT * FROM ${tableName};`)
-        .all();
-
-        console.log("RESULTS => ", results);
-        console.log("STATUS => ", success);
-        console.log("META => ", meta);
-
-        /*
+        const db = Database.readOnly(network);
+        
+        let readReturn;
         if(query === "all"){
-           const { results } = await db
+           readReturn = await db
                 .prepare(`SELECT * FROM ${tableName};`)
                 .all();
 
         } else {
-            const { results } = await db
+            readReturn = await db
                 .prepare(`SELECT * FROM ${tableName} WHERE ${query};`)
                 .bind(valArr[0], valArr[1])
                 .all();    
-        }*/
+        }
 
-        console.log(results)
     
         return {
             status: true,
-            message: results
+            message: readReturn.results
         }
     } catch(err){
         console.log(err);
 
         return{
             status: false,
-            message: err.stack
+            message: err
         }
     }
 
 }
 
-export const updateTable = async(signer, tableName, insertCol, insertVal, query) =>{
+export const updateTable = async(signer, tableName, insertCol, valString, valArr, query) =>{
     try{
         const db = new Database({ signer });
 
         // Insert a row into the table
-        const { meta: insert } = await db
-        .prepare(`INSERT INTO ${tableName} (${insertCol}) VALUES (${insertVal}) WHERE ${query};`)
+        const { success, meta } = await db
+        .prepare(`INSERT INTO ${tableName} (${insertCol}) VALUES (${valString}) WHERE ${query};`)
+        .bind(valArr)
         .run();
         
-        await insert.txn.wait();
+        console.log("SUCCESS =>", success)
+        console.log("META =>", meta);
 
         // Perform a read query, requesting all rows from the table
         const { results } = await db.prepare(`SELECT * FROM ${tableName} WHERE ${query};`).all();
+
+        console.log("RESULTS => ", results);
 
         return {
             status: true, 
@@ -173,8 +164,8 @@ export const updateTable = async(signer, tableName, insertCol, insertVal, query)
         console.log(err);
 
         return{
-            status: true, 
-            message: err.stack
+            status: false, 
+            message: err
         }
     }
 

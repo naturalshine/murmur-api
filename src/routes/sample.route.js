@@ -6,7 +6,9 @@ import {
     updateSample,
     deleteSample,
     insertSample,
-    deleteAllSamples
+    deleteAllSamples,
+    createSampleNft,
+    tablelandSampleTable
   } from "../controllers/sample.controller";
 
 import { authenticateToken } from "../middleware/auth";
@@ -17,6 +19,10 @@ const sampleRouter = express.Router();
 sampleRouter.get("/samples", authenticateToken, getSamples);
 
 sampleRouter.get("/samples/:id", authenticateToken, getSingleSample);
+
+sampleRouter.post("/samples/nft", authenticateToken, createSampleNft);
+
+sampleRouter.post("/samples/tableland/create", authenticateToken, tablelandSampleTable)
 
 sampleRouter.post("/samples", authenticateToken, insertSample);
 

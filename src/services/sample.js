@@ -7,35 +7,33 @@ import {
   insertTable, 
   readTable, 
   updateTable } from '../utils/tableland';
-import { tablelandVideoChain, tablelandVideoName } from '../settings';
+import { tablelandSampleChain, tablelandSampleChain, tablelandSampleName } from '../settings';
 
 
-const videoModel = new MurmurModel('videos');
+const sampleModel = new MurmurModel('samples');
 
-export const createVideo = async (metadata) => {
+export const createSample = async (metadata) => {
     try {
         const files = [
           metadata.path + metadata.file + ".png", 
-          metadata.path + metadata.file + ".mp4", 
           metadata.path + metadata.file + ".wav", 
         ]
     
         // TODO TESTING --> REMOVE THIS (Timeout)
-        const videoCid = {
+        const sampleCid = {
           message: "bafybeidwmcqtldhqfx6d42cokrwzl32nmqfslqa6hju7ovsn3nmjssyzdi"
         }
-        //const videoCid = await uploadToWeb3Storage(files);
-        /*if(!videoCid.status){
-          console.log(videoCid.message);
-          throw new Error('Web3 Storage Failed: ' + videoCid.message);
+        //const sampleCid = await uploadToWeb3Storage(files);
+        /*if(!sampleCid.status){
+          console.log(sampleCid.message);
+          throw new Error('Web3 Storage Failed: ' + sampleCid.message);
         }*/
     
-        metadata.image = videoCid.message + "/" + metadata.file + ".png";
-        metadata.video = videoCid.message + "/" + metadata.file + ".mp4";
-        metadata.audio = videoCid.message + "/" + metadata.file + ".wav";
+        metadata.image = sampleCid.message + "/" + metadata.file + ".png";
+        metadata.audio = sampleCid.message + "/" + metadata.file + ".wav";
     
 
-        const tablelandData = await createVideoMetadata(metadata);
+        const tablelandData = await createSampleMetadata(metadata);
         const [tColString, tValString, tValArr] = await createColValArr(tablelandData);
         
         const query = {
@@ -46,14 +44,14 @@ export const createVideo = async (metadata) => {
         const [queryString, valArr] = await createQueryString(query);
         console.log("QUERY STRING =>", queryString);
 
-        const createVideoReturn = await createTablelandVideo(tColString, tValArr);
-        console.log("CREATE TABLELAND =>", createVideoReturn.message);
+        const createSampleReturn = await createTablelandSample(tColString, tValArr);
+        console.log("CREATE TABLELAND =>", createSampleReturn.message);
 
-        const readVideoReturn = await readTablelandVideo(queryString, valArr);
-        console.log("READ MESSAGE =>", readVideoReturn.message);
+        const readSampleReturn = await readTablelandSample(queryString, valArr);
+        console.log("READ MESSAGE =>", readSampleReturn.message);
         
         //TODO: store token id from tableland return
-        metadata.tablelandId = readVideoReturn.message[0].id
+        metadata.tablelandId = readSampleReturn.message[0].id
 
         // local db storage data transformation
         if (metadata.authorship){
@@ -68,8 +66,8 @@ export const createVideo = async (metadata) => {
 
         // store in local db
         let [colString, valString] = await createColValArr(metadata);
-        const data = await videoModel.insertWithReturn(colString, valString);
-        console.log("VIDEO NFT");
+        const data = await sampleModel.insertWithReturn(colString, valString);
+        console.log("SAMPLE NFT");
         console.log(data.rows);
     
         // TODO: MINT
@@ -93,18 +91,18 @@ export const createVideo = async (metadata) => {
 }
 
 
-// CREATE tableland video table
-export const createTablelandVideoTable = async(prefix, data) => {
+// CREATE tableland sample table
+export const createSampleTable = async(prefix, data) => {
   try{
         let colString = await createColString(data);
-        const signer = await connectTableland(tablelandVideoChain);
-        const createTablelandVideoTable = await createTable(signer, prefix, colString);
-        if(!createTablelandVideoTable.status){
-            throw new Error("Creating table failed: ", createTablelandVideoTable.message)
+        const signer = await connectTableland(tablelandSampleChain);
+        const createTablelandSampleTable = await createTable(signer, prefix, colString);
+        if(!createTablelandSampleTable.status){
+            throw new Error("Creating table failed: ", createTablelandSampleTable.message)
         }
         return{
             status: true,
-            message: createTablelandVideoTable.message
+            message: createTablelandSampleTable.message
         }
   } catch(err){
         console.log(err);
@@ -118,12 +116,12 @@ export const createTablelandVideoTable = async(prefix, data) => {
 
 }
 
-// READ tableland video
-export const readTablelandVideo = async(query, valArr) => {
+// READ tableland sample
+export const readTablelandSample = async(query, valArr) => {
   try{
-      const { status, message } = await readTable(tablelandVideoChain, tablelandVideoName, query, valArr);
+      const { status, message } = await readTable(tablelandSampleChain, tablelandSampleName, query, valArr);
       if(!status){
-          throw new Error("Reading tableland video table failed: ", message);
+          throw new Error("Reading tableland sample table failed: ", message);
       }
 
       return {
@@ -142,18 +140,18 @@ export const readTablelandVideo = async(query, valArr) => {
 
 }
 
-// UPDATE tableland video
-export const updateTablelandVideo = async(insertCol, insertVal, query) => {
+// UPDATE tableland sample
+export const updateTablelandSample = async(insertCol, insertVal, query) => {
   try{
-      const signer = await connectTableland(tablelandVideoChain);
-      const updateVideoTable = await updateTable(signer, tablelandVideoName, signer, insertCol, insertVal, query);
-      if(!updateTablelandVideo.status){
-          throw new Error("Updating Tableland Video failed: ", updateTablelandVideo.message);
+      const signer = await connectTableland(tablelandSampleChain);
+      const updateSampleTable = await updateTable(signer, tablelandSampleName, signer, insertCol, insertVal, query);
+      if(!updateSampleTable.status){
+          throw new Error("Updating Tableland Sample failed: ", updateSampleTable.message);
       }
   
       return{
           status: true,
-          message: updateVideoTable.message
+          message: updateSampleTable.message
       }
   } catch(err){
       console.log(err);
@@ -167,13 +165,13 @@ export const updateTablelandVideo = async(insertCol, insertVal, query) => {
 
 }
 
-// CREATE tableland video
-export const createTablelandVideo = async(colString, valArr) => {
+// CREATE tableland sample
+export const createTablelandSample = async(colString, valArr) => {
   try{
     
-      const { status, message } = await insertTable(tablelandVideoChain, tablelandVideoName, colString, valArr);
+      const { status, message } = await insertTable(tablelandSampleChain, tablelandSampleName, colString, valArr);
       if(!status){
-          throw new Error("Tableland Create Video Failed: ", message);
+          throw new Error("Tableland Create Sample Failed: ", message);
       }
 
       return{
@@ -194,13 +192,12 @@ export const createTablelandVideo = async(colString, valArr) => {
 
 }
 
-export const createVideoMetadata = async (metadata) => {
+export const createSampleMetadata = async (metadata) => {
   const newMetadata = {};
   newMetadata.name = metadata.title;
   newMetadata.description = metadata.description;
   newMetadata.image = metadata.image;
   newMetadata.audio = metadata.audio;
-  newMetadata.video = metadata.video;
 
   const attributes = [
       {

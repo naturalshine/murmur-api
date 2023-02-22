@@ -140,8 +140,11 @@ export const createVideoNFT = async (req, res) => {
       throw new Error("Video failed : " + data.message);
     }
 
+    console.log("DATA => ", data)
+
+
     res.status(200).json({
-      message: data.rows
+      message: data.message
     });
 
   } catch (err) {
