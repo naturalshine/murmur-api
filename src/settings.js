@@ -30,7 +30,7 @@ export const tablelandVideoPrefix = process.env.VIDEO_PREFIX
 
 //packs
 export const tablelandPackChain = process.env.TABLELAND_PACK_CHAIN
-export const tablelandPackName = process.env.TABLE_PACK_NAME
+export const tablelandPackName = process.env.TABLELAND_PACK_NAME
 export const tablelandPackPrefix = process.env.TABLELAND_PACK_PREFIX
 
 //samples

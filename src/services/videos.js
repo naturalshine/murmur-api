@@ -1,5 +1,5 @@
 import MurmurModel from "../models/murmur.model";
-import { createColValArr, createColString, createQueryString } from "../utils/queryHelper"
+import { createTablelandVars, createColValArr, createColString, createQueryString } from "../utils/queryHelper"
 import { uploadToWeb3Storage } from "../utils/storeMedia";
 import { 
   connectTableland, 
@@ -36,7 +36,7 @@ export const createVideo = async (metadata) => {
     
 
         const tablelandData = await createVideoMetadata(metadata);
-        const [tColString, tValString, tValArr] = await createColValArr(tablelandData);
+
         
         const query = {
             name: tablelandData.name, 
@@ -46,7 +46,9 @@ export const createVideo = async (metadata) => {
         const [queryString, valArr] = await createQueryString(query);
         console.log("QUERY STRING =>", queryString);
 
-        const createVideoReturn = await createTablelandVideo(tColString, tValArr);
+        //create tableland data entry
+        const [tColString, tValString] = await createTablelandVars(tablelandData);
+        const createVideoReturn = await createTablelandVideo(tColString, tValString);
         console.log("CREATE TABLELAND =>", createVideoReturn.message);
 
         const readVideoReturn = await readTablelandVideo(queryString, valArr);
@@ -168,10 +170,10 @@ export const updateTablelandVideo = async(insertCol, insertVal, query) => {
 }
 
 // CREATE tableland video
-export const createTablelandVideo = async(colString, valArr) => {
+export const createTablelandVideo = async(colString, valString) => {
   try{
     
-      const { status, message } = await insertTable(tablelandVideoChain, tablelandVideoName, colString, valArr);
+      const { status, message } = await insertTable(tablelandVideoChain, tablelandVideoName, colString, valString);
       if(!status){
           throw new Error("Tableland Create Video Failed: ", message);
       }

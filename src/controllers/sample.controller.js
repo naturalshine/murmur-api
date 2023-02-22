@@ -16,7 +16,7 @@ const sampleModel = new MurmurModel('samples');
 
 export const getSamples = async (req, res) => {
     try {
-      const data = await sampleModel.select('id, name, description');
+      const data = await sampleModel.select('id, title, description');
       res.status(200).json({
         messages: data.rows
       });
@@ -33,7 +33,7 @@ export const getSamples = async (req, res) => {
 */
 export const getSingleSample = async (req, res) => {
     try {
-      const data = await sampleModel.select(`id,name,description`, req.params.id);
+      const data = await sampleModel.select(`id,title,description`, req.params.id);
       res.status(200).json({
         message: data.rows
       });
@@ -64,7 +64,7 @@ export const insertSample = async (req, res) => {
       }
       let [colString, valString] = await createColValArr(req.body)
       console.log(colString, valString);
-      const data = await videoModel.insertWithReturn(colString, valString);
+      const data = await sampleModel.insertWithReturn(colString, valString);
 
       res.status(201).json({
         message: data.rows

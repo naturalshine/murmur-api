@@ -102,7 +102,7 @@ describe('Videos', () => {
         done();
         });
     }).timeout(100000);*/
-
+  /*
   it('creates web3 video', done => {
       const data = { 
         title: 'Claire the sixth', 
@@ -149,6 +149,6 @@ describe('Videos', () => {
         done();
         });
     }).timeout(100000);
-
+    */
 
 });

@@ -38,6 +38,29 @@ export const createColString = async(data) => {
     return colString;
 }
 
+export const createTablelandVars = async(data) => {
+    // data is object
+    // return two arrays: one of cols and one of vals
+    let colsArr = [];
+    Object.keys(data)
+        .map(function(key){
+            colsArr.push(key);
+        });
+    let colString, valString;
+    colsArr.forEach(function (item, index) {
+        if (index == 0){
+            colString = item;
+            valString = "'" + data[item] + "'"
+        } else {
+            colString = colString + ", " + item
+            valString = valString + ", '" + data[item] + "'"
+        }
+        
+    });
+
+    return [colString, valString]
+}
+
 
 export const createColValArr = async(data) => {
     // data is object

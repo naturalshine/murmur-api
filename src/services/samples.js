@@ -1,5 +1,5 @@
 import MurmurModel from "../models/murmur.model";
-import { createColValArr, createColString, createQueryString } from "../utils/queryHelper"
+import { createColValArr, createTablelandVars, createColString, createQueryString } from "../utils/queryHelper"
 import { uploadToWeb3Storage } from "../utils/storeMedia";
 import { 
   connectTableland, 
@@ -7,7 +7,7 @@ import {
   insertTable, 
   readTable, 
   updateTable } from '../utils/tableland';
-import { tablelandSampleChain, tablelandSampleChain, tablelandSampleName } from '../settings';
+import { tablelandSampleChain, tablelandSampleName } from '../settings';
 
 
 const sampleModel = new MurmurModel('samples');
@@ -21,10 +21,10 @@ export const createSample = async (metadata) => {
     
         // TODO TESTING --> REMOVE THIS (Timeout)
         const sampleCid = {
-          message: "bafybeidwmcqtldhqfx6d42cokrwzl32nmqfslqa6hju7ovsn3nmjssyzdi"
+          message: "bafybeicttqdlhrtbmf7ajtog5hljlygow3dj33fp5rrszdgjzfmnowjfkm"
         }
-        //const sampleCid = await uploadToWeb3Storage(files);
-        /*if(!sampleCid.status){
+        /*const sampleCid = await uploadToWeb3Storage(files);
+        if(!sampleCid.success){
           console.log(sampleCid.message);
           throw new Error('Web3 Storage Failed: ' + sampleCid.message);
         }*/
@@ -34,7 +34,6 @@ export const createSample = async (metadata) => {
     
 
         const tablelandData = await createSampleMetadata(metadata);
-        const [tColString, tValString, tValArr] = await createColValArr(tablelandData);
         
         const query = {
             name: tablelandData.name, 
@@ -44,7 +43,8 @@ export const createSample = async (metadata) => {
         const [queryString, valArr] = await createQueryString(query);
         console.log("QUERY STRING =>", queryString);
 
-        const createSampleReturn = await createTablelandSample(tColString, tValArr);
+        const [tColString, tValString, tValArr] = await createTablelandVars(tablelandData);
+        const createSampleReturn = await createTablelandSample(tColString, tValString, tValArr);
         console.log("CREATE TABLELAND =>", createSampleReturn.message);
 
         const readSampleReturn = await readTablelandSample(queryString, valArr);
@@ -94,6 +94,7 @@ export const createSample = async (metadata) => {
 // CREATE tableland sample table
 export const createSampleTable = async(prefix, data) => {
   try{
+        console.log("SAMPLE CHAIN =>", tablelandSampleChain)
         let colString = await createColString(data);
         const signer = await connectTableland(tablelandSampleChain);
         const createTablelandSampleTable = await createTable(signer, prefix, colString);
@@ -213,8 +214,16 @@ export const createSampleMetadata = async (metadata) => {
           "value": metadata.duration
       },
       {
-          "trait_type": "play_count",
-          "value": metadata.play_count
+          "trait_type": "start_time",
+          "value": metadata.start_time
+      },
+      {
+        "trait_type": "end_time",
+        "value": metadata.end_time
+      },
+      {
+        "trait_type": "loop",
+        "value": metadata.loop
       },
       {
           "trait_type": "keywords",

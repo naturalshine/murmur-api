@@ -12,14 +12,14 @@ import {
 export const connectTableland = async(network) => {
     let privateKey;
 
-    if(network === "mumbai"){
+    if(network === "maticum"){
         privateKey = `0x${polygonKey}`;
     } else {
         privateKey = `0x${ethKey}`;
     }
 
     const wallet = new Wallet(privateKey);
-
+    
     const provider = new providers.InfuraProvider(network, infuraKey);
 
     const baseSigner = wallet.connect(provider);
@@ -58,11 +58,11 @@ export const createTable = async (signer, prefix, colString) => {
     }
 }
 
-export const insertTable = async(network, tableName, colString, valArr) => {
+export const insertTable = async(network, tableName, colString, valString, valArr) => {
     try{
         let privateKey;
 
-        if(network === "mumbai"){
+        if(network === "maticmum"){
             privateKey = `0x${polygonKey}`;
         } else {
             privateKey = `0x${ethKey}`;
@@ -78,9 +78,11 @@ export const insertTable = async(network, tableName, colString, valArr) => {
         const db = new Database({ signer });
         
         // Insert a row into the table
-        const { meta: insert } = await db.prepare(`INSERT INTO ${tableName} (${colString}) VALUES (?, ?, ?, ?, ?, ?);`)
-        .bind(valArr[0], valArr[1], valArr[2], valArr[3], valArr[4], valArr[5])
+        const { meta: insert } = await db.prepare(`INSERT INTO ${tableName} (${colString}) VALUES (${valString});`)
         .run();
+        
+        //        .bind(valArr[0], valArr[1], valArr[2], valArr[3], valArr[4], valArr[5])
+
 
         console.log("duration =>", insert.duration)
 

@@ -1,5 +1,8 @@
 import MurmurModel from "../models/murmur.model";
-import { createColValArr, createColString, createQueryString } from "../utils/queryHelper"
+import { createColValArr, 
+        createTablelandVars, 
+        createColString, 
+        createQueryString } from "../utils/queryHelper"
 import { uploadToWeb3Storage } from "../utils/storeMedia";
 import { 
   connectTableland, 
@@ -15,17 +18,17 @@ const packModel = new MurmurModel('packs');
 export const createPack = async (metadata) => {
     try {
         const files = [
-          metadata.path + metadata.file + ".png", 
-          metadata.path + metadata.file + ".mp4", 
-          metadata.path + metadata.file + ".wav", 
+          metadata.path + metadata.file + ".png"
         ]
     
         // TODO TESTING --> REMOVE THIS (Timeout)
+        
         const packCid = {
-          message: "bafybeidwmcqtldhqfx6d42cokrwzl32nmqfslqa6hju7ovsn3nmjssyzdi"
+          message: "bafybeihs2kflvvetotocyguobltz2ogquawfntvxr3sjwmxf66kf2wahfu"
         }
-        //const packCid = await uploadToWeb3Storage(files);
-        /*if(!packCid.status){
+        /*
+        const packCid = await uploadToWeb3Storage(files);
+        if(!packCid.success){
           console.log(packCid.message);
           throw new Error('Web3 Storage Failed: ' + packCid.message);
         }*/
@@ -34,7 +37,6 @@ export const createPack = async (metadata) => {
     
 
         const tablelandData = await createPackMetadata(metadata);
-        const [tColString, tValString, tValArr] = await createColValArr(tablelandData);
         
         const query = {
             name: tablelandData.name, 
@@ -44,7 +46,8 @@ export const createPack = async (metadata) => {
         const [queryString, valArr] = await createQueryString(query);
         console.log("QUERY STRING =>", queryString);
 
-        const createPackReturn = await createTablelandPack(tColString, tValArr);
+        const [tColString, tValString] = await createTablelandVars(tablelandData);
+        const createPackReturn = await createTablelandPack(tColString, tValString);
         console.log("CREATE TABLELAND =>", createPackReturn.message);
 
         const readPackReturn = await readTablelandPack(queryString, valArr);
@@ -166,10 +169,10 @@ export const updateTablelandPack = async(insertCol, insertVal, query) => {
 }
 
 // CREATE tableland pack
-export const createTablelandPack = async(colString, valArr) => {
+export const createTablelandPack = async(colString) => {
   try{
     
-      const { status, message } = await insertTable(tablelandPackChain, tablelandPackName, colString, valArr);
+      const { status, message } = await insertTable(tablelandPackChain, tablelandPackName, colString);
       if(!status){
           throw new Error("Tableland Create Pack Failed: ", message);
       }
@@ -208,12 +211,8 @@ export const createPackMetadata = async (metadata) => {
           "value": metadata.published
       },
       {
-          "trait_type": "duration",
-          "value": metadata.duration
-      },
-      {
-          "trait_type": "play_count",
-          "value": metadata.play_count
+        "trait_type": "edition_size",
+        "value": metadata.edition_size
       },
       {
           "trait_type": "keywords",
@@ -222,10 +221,6 @@ export const createPackMetadata = async (metadata) => {
       {
           "trait_type": "asmr_sounds",
           "value": metadata.asmr_sounds
-      },
-      {
-          "trait_type": "lyrics",
-          "value": metadata.lyrics
       }
   ];
 

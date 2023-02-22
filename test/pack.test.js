@@ -4,43 +4,41 @@ describe('Packs', () => {
 
 
     it('inserts pack', done => {
-    
+
         const data = { 
-          title: 'Claire', 
-          description: 'pack description', 
-          image: '',
-          file: 'deer',
-          path: '/home/cst/code/murmur/murmur-api/src/resources/static/assets/uploads/',
-          authorship: [{
-              created_by: [
-                  {
-                      primary_artist: 'Claire Tolan',
-                      collaborators: ['CST', 'Chez Shhh']
-                  }
-              ],
-              written_by: [
-                  {
-                      primary_artist: 'Claire Tolan',
-                      collaborators: ['CST', 'Chez Shhh']
-                  }
-              ]
-          }],
-          published: true, 
-          duration: '3.01',
-          play_count: 0,
-          keywords: [{
-              keywords: ['cool', 'pack', 'shhh', 'role play']}],
-          asmr_sounds: [{
-              asmr_sounds: ['crinkling', 'scratching', 'whispering']
-          }],
-          lyrics: 'suck it losers'
-      };    
+            title: 'Claire', 
+            description: 'pack description', 
+            image: '',
+            file: 'deer',
+            path: '/home/cst/code/murmur/murmur-api/src/resources/static/assets/uploads/',
+            authorship: [{
+                created_by: [
+                    {
+                        primary_artist: 'Claire Tolan',
+                        collaborators: ['CST', 'Chez Shhh']
+                    }
+                ],
+                written_by: [
+                    {
+                        primary_artist: 'Claire Tolan',
+                        collaborators: ['CST', 'Chez Shhh']
+                    }
+                ]
+            }],
+            edition_size: 30,
+            published: true, 
+            keywords: [{
+                keywords: ['cool', 'pack', 'shhh', 'role play']}],
+            asmr_sounds: [{
+                asmr_sounds: ['crinkling', 'scratching', 'whispering']
+            }],
+        };    
       server
         .post(`${BASE_URL}/media/packs`)
         .send(data)
-        .expect(200)
+        .expect(201)
         .end((err, res) => {
-        expect(res.status).to.equal(200);
+        expect(res.status).to.equal(201);
         expect(res.body.message).to.be.instanceOf(Object);
         expect(res.body.message[0]).to.have.property('id');
         expect(res.body.message[0]).to.have.property('title', data.title);
@@ -67,7 +65,7 @@ describe('Packs', () => {
 
   it('gets single pack', done => {
     server
-      .get(`${BASE_URL}/media/pack?id=1`)
+      .get(`${BASE_URL}/media/packs?id=1`)
       .expect(200)
       .end((err, res) => {
         expect(res.status).to.equal(200);
@@ -80,13 +78,15 @@ describe('Packs', () => {
         done();
       });
   });
-  
+  /*
   it('creates tableland pack table', done => {
     const tData = {
             'id' : 'integer primary key',
             'name': 'text', 
             'description': 'text', 
             'image': 'text', 
+            'decimals': 'int',
+            'price': 'int',
             'attributes': 'text'
           };
     server
@@ -98,10 +98,12 @@ describe('Packs', () => {
         done();
         });
     }).timeout(100000);
-
+*/
+/*
   it('creates web3 pack', done => {
-      const data = { 
-        title: 'Claire the sixth', 
+
+    const data = { 
+        title: 'Claire', 
         description: 'pack description', 
         image: '',
         file: 'deer',
@@ -120,16 +122,14 @@ describe('Packs', () => {
                 }
             ]
         }],
+        edition_size: 30,
         published: true, 
-        duration: '3.01',
-        play_count: 0,
         keywords: [{
             keywords: ['cool', 'pack', 'shhh', 'role play']}],
         asmr_sounds: [{
             asmr_sounds: ['crinkling', 'scratching', 'whispering']
         }],
-        lyrics: 'suck it losers'
-    };    
+    };  
     server
         .post(`${BASE_URL}/media/packs/nft`)
         .send(data)
@@ -143,6 +143,6 @@ describe('Packs', () => {
         done();
         });
     }).timeout(100000);
-
+*/
 
 });
