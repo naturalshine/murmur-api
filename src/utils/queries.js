@@ -14,3 +14,34 @@ VALUES ('chidimo', 'first message'),
 `;
 
 export const dropMessagesTable = 'DROP TABLE messages';
+
+export const createVideosTable = `
+DROP TABLE IF EXISTS videos;
+CREATE TABLE IF NOT EXISTS videos (
+  id SERIAL PRIMARY KEY,
+  tablelandId INT,
+  title TEXT DEFAULT '',
+  description TEXT DEFAULT '',
+  image TEXT DEFAULT '', 
+  video TEXT DEFAULT '', 
+  audio TEXT DEFAULT '', 
+  file TEXT DEFAULT '',
+  path TEXT DEFAULT '',
+  authorship JSONB,
+  created_at DATE NOT NULL DEFAULT CURRENT_DATE,
+  published BOOLEAN DEFAULT FALSE,
+  duration TEXT,
+  play_count INT, 
+  keywords JSONB,
+  asmr_sounds JSONB,
+  lyrics TEXT
+  )
+  `;
+
+export const insertVideos = `
+INSERT INTO videos(title, description)
+VALUES ('chidimo', 'first message'),
+      ('orji', 'second message')
+`;
+
+export const dropVideosTable = 'DROP TABLE videos';

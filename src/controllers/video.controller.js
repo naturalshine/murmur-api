@@ -2,6 +2,12 @@
 
 import MurmurModel from "../models/murmur.model";
 import { createQueryString, createColValArr } from "../utils/queryHelper"
+import { 
+          createVideo, 
+          createTablelandVideoTable,
+       } from "../services/videos";
+import { tablelandVideoPrefix } from '../settings';
+
 const videoModel = new MurmurModel('videos');
 
 /**
@@ -10,7 +16,7 @@ const videoModel = new MurmurModel('videos');
 
 export const getVideos = async (req, res) => {
     try {
-      const data = await videoModel.select('id, name, description');
+      const data = await videoModel.select('id, title, description');
       res.status(200).json({
         messages: data.rows
       });
@@ -23,11 +29,11 @@ export const getVideos = async (req, res) => {
 
 
 /**
- * Return single video pack by id
+ * Return single video by id
 */
 export const getSingleVideo = async (req, res) => {
     try {
-      const data = await videoModel.select(`id,name,description`, req.params.id);
+      const data = await videoModel.select(`id,title,description`, req.params.id);
       res.status(200).json({
         message: data.rows
       });
@@ -46,10 +52,20 @@ export const getSingleVideo = async (req, res) => {
 
 export const insertVideo = async (req, res) => {
     try {
-      console.log(req.body)
-      let columns, values = await createColValArr(req.body)
-      const data = await videoModel.insertWithReturn(columns, values);
-      res.status(201).json({
+      console.log(req.body);
+      if (req.body.authorship){
+        req.body.authorship = JSON.stringify(req.body.authorship[0]);
+      }
+      if(req.body.asmr_sounds){
+        req.body.asmr_sounds = JSON.stringify(req.body.asmr_sounds[0]);
+      }
+      if(req.body.keywords){
+        req.body.keywords = JSON.stringify(req.body.keywords[0]);
+      }
+      let [colString, valString] = await createColValArr(req.body)
+      console.log(colString, valString);
+      const data = await videoModel.insertWithReturn(colString, valString);
+      res.status(200).json({
         message: data.rows
       });
     } catch (err) {
@@ -111,4 +127,52 @@ export const deleteAllVideos = async (req, res) => {
     });
   }
 };
+
+/**
+ * create video on web3 storage
+ */
+export const createVideoNFT = async (req, res) => {
+  try {
+
+    const data = await createVideo(req.body);
+    
+    if(!data.status){
+      throw new Error("Video failed : " + data.message);
+    }
+
+    res.status(200).json({
+      message: data.rows
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      message: err
+    });
+  }
+};
+
+/**
+ * Create tableland table
+ */
+export const tablelandVideoTable = async (req, res) => {
+  try {
+
+    const data = await createTablelandVideoTable(tablelandVideoPrefix, req.body);
+    
+    if(!data.status){
+      throw new Error("tableland creation failed : " + data.message);
+    }
+
+    res.status(200).json({
+      message: data.rows
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      message: err
+    });
+  }
+};
+
+
 

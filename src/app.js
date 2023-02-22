@@ -35,9 +35,10 @@ app.use(
   })
 );
 
+
 app.use('/v1/media', packRouter, videoRouter, sampleRouter);
 app.use('/v1/api', murmurRouter);
-app.use('/storage', fileRouter);
+app.use('/v1/storage', fileRouter);
 app.use('/v1', indexRouter);
 
 app.use((err, req, res, next) => {
