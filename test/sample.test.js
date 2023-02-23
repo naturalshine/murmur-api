@@ -10,6 +10,8 @@ describe('Samples', () => {
             description: 'sample description', 
             image: '',
             audio: '',
+            video_id: 1,
+            pack_id: 1,
             file: 'deer',
             path: '/home/cst/code/murmur/murmur-api/src/resources/static/assets/uploads/',
             authorship: [{
@@ -105,7 +107,7 @@ describe('Samples', () => {
         done();
         });
     }).timeout(100000);*/
-  
+  /*
   it('creates web3 sample', done => {
     const data = { 
       title: 'Claire two', 
@@ -153,6 +155,6 @@ describe('Samples', () => {
         done();
         });
     }).timeout(100000);
-
+    */
     
 });

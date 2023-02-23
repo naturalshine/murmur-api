@@ -71,7 +71,9 @@ CREATE TABLE IF NOT EXISTS samples (
   loop BOOLEAN,
   keywords JSONB,
   asmr_sounds JSONB,
-  lyrics TEXT
+  lyrics TEXT,
+  video_id integer REFERENCES videos(id),
+  pack_id integer REFERENCES packs(id)
   )
   `;
 

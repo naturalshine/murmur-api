@@ -7,7 +7,6 @@ import cookieParser from 'cookie-parser';
 
 import './fetch-polyfill'
 import indexRouter from './routes';
-import murmurRouter from './routes/murmur.route';
 import sampleRouter from './routes/sample.route';
 import videoRouter from './routes/video.route';
 import packRouter from './routes/packs.route';
@@ -38,7 +37,6 @@ app.use(
 
 
 app.use('/v1/media', packRouter, videoRouter, sampleRouter);
-app.use('/v1/api', murmurRouter);
 app.use('/v1/storage', fileRouter);
 app.use('/v1', indexRouter);
 

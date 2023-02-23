@@ -28,11 +28,12 @@ TODO:
 ## SAMPLES AND SAMPLE PACKS
 1. API: log requests to cut file in ffmpeg format
 3. API: cut file
-8. API: samples update fkeys to sample pack
-9. API: mint sample pack endpoint request
 14. API: mint polygon tokens 
 15. API: save token ids to database
 16. API: return sample pack & samples (playable) to frontend
+    --> n.b. need endpoint to pass files given id --> or need to fetch on frontend via web3 storage
+17. how to handle FK in tableland
+18. DYNAMIC 2-table with join for attributes of NFT? 
 
 ### FRONT END LOG
 FE: VIDEO

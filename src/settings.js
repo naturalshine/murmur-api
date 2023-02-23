@@ -44,3 +44,6 @@ export const ethKey = process.env.ETH_KEY
 export const infuraKey = process.env.INFURA_KEY
 export const ethChain = process.env.ETH_CHAIN
 export const polygonChain = process.env.POLYGON_CHAIN
+
+// createSamples
+export const samplePath = process.env.SAMPLE_PATH

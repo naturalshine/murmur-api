@@ -6,6 +6,7 @@ import {
           createSample, 
           createSampleTable,
        } from "../services/samples";
+import { cutSamples } from "../services/createSamples"
 import { tablelandSamplePrefix } from '../settings';
 
 const sampleModel = new MurmurModel('samples');
@@ -179,5 +180,26 @@ export const tablelandSampleTable = async (req, res) => {
     });
   }
 };
+
+export const createSamples = async (req, res) => {
+  try {
+
+    const data = await cutSamples(req.body);
+    
+    if(!data.success){
+      throw new Error("sample creation failed : " + data.message);
+    }
+
+    res.status(200).json({
+      message: data.paths
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      message: err
+    });
+  }
+};
+
 
 
