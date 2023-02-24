@@ -9,7 +9,7 @@ import {
     deleteAllSamples,
     createSampleNft,
     tablelandSampleTable,
-    createSamples
+    createSample
   } from "../controllers/sample.controller";
 
 import { authenticateToken } from "../middleware/auth";
@@ -21,7 +21,7 @@ sampleRouter.get("/samples", authenticateToken, getSamples);
 
 sampleRouter.get("/samples/:id", authenticateToken, getSingleSample);
 
-sampleRouter.post("/samples/create", authenticateToken, createSamples);
+sampleRouter.post("/samples/create", authenticateToken, createSample);
 
 sampleRouter.post("/samples/nft", authenticateToken, createSampleNft);
 

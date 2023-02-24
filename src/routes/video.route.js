@@ -12,7 +12,6 @@ import {
   } from "../controllers/video.controller";
 
 import { authenticateToken } from "../middleware/auth";
-import { readTablelandVideo } from '../services/videos';
 
 const videoRouter = express.Router();
 

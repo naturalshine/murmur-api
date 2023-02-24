@@ -3,11 +3,11 @@
 import MurmurModel from "../models/murmur.model";
 import { createQueryString, createColValArr } from "../utils/queryHelper"
 import { 
-          createSample, 
-          createSampleTable,
-       } from "../services/samples";
-import { cutSamples } from "../services/createSamples"
-import { tablelandSamplePrefix } from '../settings';
+          createNft, 
+          createTableTableland,
+       } from "../services/nft";
+import { cutSample } from "../utils/cutSample"
+import { tablelandSamplePrefix, tablelandSampleChain } from '../settings';
 
 const sampleModel = new MurmurModel('samples');
 
@@ -137,8 +137,9 @@ export const deleteAllSamples = async (req, res) => {
  */
 export const createSampleNft = async (req, res) => {
   try {
+    await cutSample(req.body[0].sample[0]);
 
-    const data = await createSample(req.body);
+    const data = await createNft(req.body[0].metadata[0], 'samples');
     
     if(!data.status){
       throw new Error("Sample failed : " + data.message);
@@ -164,7 +165,7 @@ export const createSampleNft = async (req, res) => {
 export const tablelandSampleTable = async (req, res) => {
   try {
 
-    const data = await createSampleTable(tablelandSamplePrefix, req.body);
+    const data = await createTableTableland(tablelandSamplePrefix, req.body, tablelandSampleChain);
     
     if(!data.status){
       throw new Error("tableland creation failed : " + data.message);
@@ -181,17 +182,17 @@ export const tablelandSampleTable = async (req, res) => {
   }
 };
 
-export const createSamples = async (req, res) => {
+export const createSample = async (req, res) => {
   try {
 
-    const data = await cutSamples(req.body);
+    const data = await cutSample(req.body[0].sample[0]);
     
     if(!data.success){
       throw new Error("sample creation failed : " + data.message);
     }
 
     res.status(200).json({
-      message: data.paths
+      message: data.message
     });
 
   } catch (err) {

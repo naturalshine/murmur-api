@@ -93,3 +93,6 @@ export const createColValArr = async(data) => {
 };
   
 
+export const createSQLString = async (table, tablelandId) => {
+    
+}

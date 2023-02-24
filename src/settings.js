@@ -47,3 +47,8 @@ export const polygonChain = process.env.POLYGON_CHAIN
 
 // createSamples
 export const samplePath = process.env.SAMPLE_PATH
+
+// chains
+export const polygonContract = process.env.POLYGON_CONTRACT
+export const ethContract = process.env.ETH_CONTRACT
+export const mintingWallet = process.env.MINTING_WALLET

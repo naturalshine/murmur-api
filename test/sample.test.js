@@ -85,6 +85,28 @@ describe('Samples', () => {
         done();
       });
   });
+
+  it('cuts arr of samples', done => {
+    const data = [{
+    
+      sample: [
+        {
+          filePath: '/home/cst/code/murmur/murmur-api/src/resources/static/assets/uploads/deer.mp4',
+          start: 16,
+          end: 20
+        }
+      ]
+    }]
+    
+    server
+      .post(`${BASE_URL}/media/samples/create`)
+      .send(data)
+      .expect(200)
+      .end((err, res) => {
+        expect(res.status).to.equal(200);
+        done();
+      });
+  });
   /*
   it('creates tableland sample table', done => {
     const tData = {
@@ -114,8 +136,7 @@ describe('Samples', () => {
       description: 'sample description', 
       image: '',
       audio: '',
-      file: 'deer',
-      path: '/home/cst/code/murmur/murmur-api/src/resources/static/assets/uploads/',
+      file: 'deer',      
       authorship: [{
           created_by: [
               {

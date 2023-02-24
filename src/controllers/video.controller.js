@@ -2,11 +2,11 @@
 
 import MurmurModel from "../models/murmur.model";
 import { createQueryString, createColValArr } from "../utils/queryHelper"
-import { 
-          createVideo, 
-          createTablelandVideoTable,
-       } from "../services/videos";
-import { tablelandVideoPrefix } from '../settings';
+import {  
+          createNft, 
+          createTableTableland,
+       } from "../services/nft";
+import { tablelandVideoPrefix, tablelandVideoChain } from '../settings';
 
 const videoModel = new MurmurModel('videos');
 
@@ -134,7 +134,7 @@ export const deleteAllVideos = async (req, res) => {
 export const createVideoNFT = async (req, res) => {
   try {
 
-    const data = await createVideo(req.body);
+    const data = await createNft(req.body, 'videos');
     
     if(!data.status){
       throw new Error("Video failed : " + data.message);
@@ -160,7 +160,7 @@ export const createVideoNFT = async (req, res) => {
 export const tablelandVideoTable = async (req, res) => {
   try {
 
-    const data = await createTablelandVideoTable(tablelandVideoPrefix, req.body);
+    const data = await createTableTableland(tablelandVideoPrefix, req.body, tablelandVideoChain);
     
     if(!data.status){
       throw new Error("tableland creation failed : " + data.message);

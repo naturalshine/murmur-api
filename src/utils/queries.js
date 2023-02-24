@@ -19,6 +19,7 @@ export const createVideosTable = `
 DROP TABLE IF EXISTS videos;
 CREATE TABLE IF NOT EXISTS videos (
   id SERIAL PRIMARY KEY,
+  tokenId INT,
   tablelandId INT,
   title TEXT DEFAULT '',
   description TEXT DEFAULT '',
@@ -51,6 +52,7 @@ export const createSamplesTable = `
 DROP TABLE IF EXISTS samples;
 CREATE TABLE IF NOT EXISTS samples (
   id SERIAL PRIMARY KEY,
+  tokenId INT,
   tablelandId INT,
   tablelandPackId INT, 
   tablelandVideoId INT,
@@ -90,6 +92,7 @@ export const createPacksTable = `
 DROP TABLE IF EXISTS packs;
 CREATE TABLE IF NOT EXISTS packs (
   id SERIAL PRIMARY KEY,
+  tokenId INT,
   tablelandId INT,
   title TEXT DEFAULT '',
   description TEXT DEFAULT '',

@@ -3,10 +3,10 @@
 import MurmurModel from "../models/murmur.model";
 import { createQueryString, createColValArr } from "../utils/queryHelper"
 import { 
-          createPack, 
-          createPackTable,
-       } from "../services/packs";
-import { tablelandPackPrefix } from '../settings';
+          createNft, 
+          createTableTableland,
+       } from "../services/nft";
+import { tablelandPackPrefix, tablelandPackChain } from '../settings';
 
 const packModel = new MurmurModel('packs');
 
@@ -137,7 +137,7 @@ export const deleteAllPacks = async (req, res) => {
 export const createPackNft = async (req, res) => {
   try {
 
-    const data = await createPack(req.body);
+    const data = await createNft(req.body, 'packs');
     
     if(!data.status){
       throw new Error("Pack failed : " + data.message);
@@ -163,7 +163,7 @@ export const createPackNft = async (req, res) => {
 export const tablelandPackTable = async (req, res) => {
   try {
 
-    const data = await createPackTable(tablelandPackPrefix, req.body);
+    const data = await createTableTableland(tablelandPackPrefix, req.body, tablelandPackChain);
     
     if(!data.status){
       throw new Error("tableland creation failed : " + data.message);
