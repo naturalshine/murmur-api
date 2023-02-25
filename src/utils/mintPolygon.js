@@ -54,7 +54,3 @@ export const mintPolygonToken = async(sqlString) => {
         }
     }
 }       
-
-module.exports = {
-    mintToken,
-}
