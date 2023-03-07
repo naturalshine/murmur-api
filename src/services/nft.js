@@ -3,7 +3,7 @@ import { createColValArr,
         createTablelandVars, 
         createColString, 
         createQueryString } from "../utils/queryHelper"
-import { uploadToWeb3Storage } from "../utils/storeMedia";
+import { uploadToWeb3Storage, retrieveHash } from "../utils/storeMedia";
 import { 
   connectTableland, 
   createTable, 
@@ -14,10 +14,12 @@ import { mintEthToken } from '../utils/mintEth';
 import { mintPolygonToken } from '../utils/mintPolygon'
 import {
         staticPath, 
+        samplePath,
         tablelandSampleName, 
         tablelandVideoName, 
         tablelandPackName } from '../settings';
 
+const delay = ms => new Promise(res => setTimeout(res, ms));
 
 
 export const createNft = async (metadata, modelName) => {
@@ -25,38 +27,53 @@ export const createNft = async (metadata, modelName) => {
     try {
         const nftModel = new MurmurModel(modelName);
 
+        metadata.file = metadata.file.split('.')[0];
+
         let files = []
         let tableName;
 
         if(modelName === 'packs'){
-          files.append(staticPath + metadata.file + ".png")
+          files.push(staticPath + metadata.file + ".png")
           tableName = tablelandPackName;
         } else if (modelName === 'samples'){
-          files.append(staticPath + metadata.file + ".png")
-          files.append(staticPath + metadata.file + ".mp3")
+          files.push(staticPath + metadata.file + ".png")
+          files.push(samplePath + metadata.file + ".mp3")
           tableName = tablelandSampleName;
         } else {
-          files.append(staticPath + metadata.file + ".png")
-          files.append(staticPath + metadata.file + ".wav")
-          files.append(staticPath + metadata.file + ".mp4")
+          files.push(staticPath + metadata.file + ".png")
+          files.push(staticPath + metadata.file + ".mp3")
+          files.push(staticPath + metadata.file + ".mp4")
           tableName = tablelandVideoName;
         }
    
     
         // TODO TESTING --> REMOVE THIS (Timeout)
         
-        const nftCid = {
+        /*const nftCid = {
           message: "bafybeihs2kflvvetotocyguobltz2ogquawfntvxr3sjwmxf66kf2wahfu"
-        }
-        /*
+        }*/
+        
         const nftCid = await uploadToWeb3Storage(files);
         if(!nftCid.success){
           console.log(nftCid.message);
           throw new Error('Web3 Storage Failed: ' + nftCid.message);
-        }*/
-    
-        metadata.image = nftCid.message + "/" + metadata.file + ".png";
-    
+        }
+
+        console.log("NFT CID", nftCid);
+
+        
+        //metadata.image = nftCid.message + "/" + metadata.file + ".png";
+        metadata.image = await retrieveHash(nftCid, metadata.file + ".png")
+
+        if(files.length > 1){
+          //metadata.audio = nftCid.message + "/" + metadata.file + ".wav";
+          metadata.audio = await retrieveHash(nftCid, metadata.file + ".mp3")
+
+        }
+        if (files.length > 2){
+          //metadata.video = nftCid.message + "/" + metadata.file + ".mp4";
+          metadata.video = await retrieveHash(nftCid, metadata.file + ".mp4");
+        }
 
         const tablelandData = await createMetadata(metadata, modelName);
         
@@ -68,15 +85,19 @@ export const createNft = async (metadata, modelName) => {
         const [queryString, valArr] = await createQueryString(query);
 
         const [tColString, tValString] = await createTablelandVars(tablelandData);
-        const createTablelandReturn = await createTableland(tColString, tValString);
+        
+        const createTablelandReturn = await createTablelandEntry(tColString, tValString, tableName);
         console.log("CREATE TABLELAND =>", createTablelandReturn.message);
+        
+        console.log("Waiting 20s after Tableland...");
+        await delay(20000)
 
-        const readTablelandReturn = await readTablelandTable(queryString, valArr);
+        const readTablelandReturn = await readTablelandTable(queryString, valArr, tableName);
         console.log("READ MESSAGE =>", readTablelandReturn.message);
         
         //TODO: store token id from tableland return
         metadata.tablelandId = readTablelandReturn.message[0].id
-
+        
         // local db storage data transformation
         if (metadata.authorship){
           metadata.authorship = JSON.stringify(metadata.authorship[0]);
@@ -95,7 +116,7 @@ export const createNft = async (metadata, modelName) => {
         console.log(data.rows);
         
         const nftUri = `SELECT * FROM ${tableName} WHERE id = ${metadata.tablelandId}`;
-
+        /*
         let tokenId 
         if(modelName == 'videos'){
           tokenId = await mintEthToken(nftUri)
@@ -106,10 +127,11 @@ export const createNft = async (metadata, modelName) => {
         // Store TokenId 
         const tokenString = "tokenId = '" + tokenId.message + "'";
         const tokenInsert = await nftModel.update(tokenString, data.rows[0].id);
-
+        */
         return{
             status: true,
-            message: tokenInsert.rows
+            //message: tokenInsert.rows
+            message: data.rows
         };
       } catch (err) {
         console.log(err);
@@ -149,9 +171,9 @@ export const createTableTableland = async(prefix, data, tablelandChain) => {
 }
 
 // READ tableland table
-export const readTablelandTable = async(query, valArr, tablelandChain, tablelandName) => {
+export const readTablelandTable = async(query, valArr, tablelandName) => {
   try{
-      const { status, message } = await readTable(tablelandChain, tablelandName, query, valArr);
+      const { status, message } = await readTable(tablelandName, query, valArr);
       if(!status){
           throw new Error("Reading tableland table failed: ", message);
       }
@@ -198,10 +220,9 @@ export const updateTablelandTable = async(insertCol, insertVal, query, tableland
 }
 
 // CREATE tableland entry
-export const createTablelandEntry = async(colString, tablelandChain, tablelandName) => {
+export const createTablelandEntry = async(colString, valString, tablelandName) => {
   try{
-    
-      const { status, message } = await insertTable(tablelandChain, tablelandName, colString);
+      const { status, message } = await insertTable(tablelandName, colString, valString);
       if(!status){
           throw new Error("Tableland Create Entry Failed: ", message);
       }

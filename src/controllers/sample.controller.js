@@ -137,9 +137,9 @@ export const deleteAllSamples = async (req, res) => {
  */
 export const createSampleNft = async (req, res) => {
   try {
-    await cutSample(req.body[0].sample[0]);
 
-    const data = await createNft(req.body[0].metadata[0], 'samples');
+    console.log("DATA =>", req.body[0])
+    const data = await createNft(req.body[0], 'samples');
     
     if(!data.status){
       throw new Error("Sample failed : " + data.message);

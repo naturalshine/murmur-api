@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { uploadFileMiddleware } from "../middleware/upload";
+import { retrieveHash } from '../utils/storeMedia';
 import { 
     baseUrl,
     staticPath     
@@ -14,8 +15,7 @@ export const uploadFile = async (req, res) => {
     }
 
     res.status(200).send({
-      message: "Uploaded the file successfully: " + req.file.originalname,
-      file: req.file.originalname
+      message: "Uploaded the file successfully: "
     });
   } catch (err) {
         if (err.code == "LIMIT_FILE_SIZE") {
@@ -25,7 +25,7 @@ export const uploadFile = async (req, res) => {
         }
 
         res.status(500).send({
-            message: `Could not upload the file: ${req.file.originalname}. ${err}`,
+            message: `Could not upload the file: ${req}. ${err}`,
         });
   }
 };
@@ -52,6 +52,17 @@ export const getListFiles = (req, res) => {
     res.status(200).send(fileInfos);
   });
 };
+
+export const retrieveFileHash = async (req, res) => {
+  const hashObj = req.body[0];
+  console.log(hashObj)
+  console.log("hash OBj ", hashObj)
+  const hash = await retrieveHash(hashObj.hash, hashObj.file);
+  console.log("HASH =>", hash)
+  res.status(200).json({
+    message: hash.hash,
+  });
+}
 
 /*
 export const downloadFile = (req, res) => {

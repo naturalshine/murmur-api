@@ -1,7 +1,7 @@
 import util from "util";
 import multer from "multer";
 
-const maxSize = 2 * 1024 * 1024;
+const maxSize = 2 * 2048 * 2048;
 
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -16,7 +16,6 @@ let storage = multer.diskStorage({
 
 let uploadFile = multer({
   storage: storage,
-  limits: { fileSize: maxSize },
 }).single("file");
 
 export const uploadFileMiddleware = util.promisify(uploadFile);

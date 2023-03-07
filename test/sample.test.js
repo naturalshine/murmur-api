@@ -91,6 +91,7 @@ describe('Samples', () => {
     
       sample: [
         {
+          index: 1,
           filePath: '/home/cst/code/murmur/murmur-api/src/resources/static/assets/uploads/deer.mp4',
           start: 16,
           end: 20
@@ -107,7 +108,7 @@ describe('Samples', () => {
         done();
       });
   });
-  /*
+  
   it('creates tableland sample table', done => {
     const tData = {
             'id' : 'integer primary key',
@@ -128,10 +129,10 @@ describe('Samples', () => {
         expect(res.status).to.equal(200);
         done();
         });
-    }).timeout(100000);*/
-  /*
+    }).timeout(100000);
+  
   it('creates web3 sample', done => {
-    const data = { 
+    const data = [{ 
       title: 'Claire two', 
       description: 'sample description', 
       image: '',
@@ -162,7 +163,7 @@ describe('Samples', () => {
       }],
       loop: true,
       lyrics: 'suck it losers'
-    };    
+    }];    
     server
         .post(`${BASE_URL}/media/samples/nft`)
         .send(data)
@@ -176,6 +177,6 @@ describe('Samples', () => {
         done();
         });
     }).timeout(100000);
-    */
+    
     
 });

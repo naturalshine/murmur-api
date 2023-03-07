@@ -1,38 +1,55 @@
 import path from 'path';
 import ffmpeg  from 'ffmpeg';
 
-import { samplePath } from '../settings'
+import { samplePath, staticPath } from '../settings'
 
-const doCut = async(filePath, start, end) => {
+const doCut = async(filePath, start, end, i) => {
   
     try{
+        console.log("FILE PATH ", filePath);
         const fileName = path.basename(filePath);    
         const fileArr = fileName.split('.')
         const slicedName = fileArr[0]
 
-        let process = new ffmpeg(filePath);
+        console.log("START ", start);
+        console.log("END ", end);
+
+        const videoFile = staticPath + slicedName + '.mp4'
+        console.log("VIDEO FILE ", videoFile);
+
+        let process = new ffmpeg(videoFile);
         
         process.then(function (spl) {
           let duration = end - start;
+          console.log("DURAITON ", duration);
           spl.setVideoStartTime(start)
               .setVideoDuration(duration)
-              .save(samplePath + slicedName + '.mp4', function (error, file) {
+              .save(samplePath + slicedName + i.toString() + '.mp4', function (error, file) {
                 if (!error){
                   console.log('sample file: ' + file);
 
-                  let audioProcess = new ffmpeg(samplePath + slicedName + '.mp4');
+                  let audioProcess = new ffmpeg(samplePath + slicedName + i.toString() + '.mp4');
       
                   audioProcess.then(function (spl) {
-                        spl.fnExtractSoundToMP3(samplePath + slicedName + '.mp3', function (error, file) {
+                        console.log("Converting to mp3");
+                        spl.fnExtractSoundToMP3(samplePath + slicedName + i.toString() + '.mp3', function (error, file) {
                             if (!error){
                               console.log('sample audio: ' + file);
+                            } else {
+                              console.log("ERROR!!");
+                              console.log(error)
                             }
                           });
+
+                      
               
-                      }, function (err) {
-                        throw new Error("Something went wrong with ffmpeg => ", err)
+                      }, function (error) {
+                        throw new Error("Something went wrong with ffmpeg => ", error)
                       })
                       
+                }else{
+                  console.log("ERROR!!!! ");
+                  console.log(error)
                 }
               })
 
@@ -63,7 +80,7 @@ export const cutSample = async (sample)=> {
     try {
 
       console.log("Cut Sample... ");
-      const cutFile = await doCut(sample.filePath, sample.start, sample.end);
+      const cutFile = await doCut(sample.filePath, sample.start, sample.end, sample.index);
 
       console.log(cutFile.file_path);
 

@@ -16,7 +16,7 @@ const videoModel = new MurmurModel('videos');
 
 export const getVideos = async (req, res) => {
     try {
-      const data = await videoModel.select('id, title, description');
+      const data = await videoModel.select('id, title, description, image, video, audio');
       res.status(200).json({
         messages: data.rows
       });

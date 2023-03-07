@@ -2,7 +2,8 @@ require("dotenv").config();
 
 const { ethers } = require('ethers')
 
-const contractABI = require('../../abis/eth-contract-abi.json');
+//const contractABI = require('../abis/eth-contract-abi.json');
+const contractABI = '';
 
 import { 
         ethKey, 

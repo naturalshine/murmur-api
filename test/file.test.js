@@ -24,4 +24,20 @@ it('inserts file', done => {
         done();
       });
   });
+
+  it('gets hash of file in folder', done => {
+    let data = [
+        {
+            hash: 'bafybeie5i4sht4dihc4757z3vexshxgrov3qbgeqjhedhglqihyac466cq',
+            file: 'deer.wav'
+        }
+    ]
+    server
+        .post(`${BASE_URL}/storage/hash`)
+        .send(data).expect(200)
+        .end((err, res) => {
+        expect(res.status).to.equal(200);
+        done();
+        });
+    });
 });

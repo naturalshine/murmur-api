@@ -11,7 +11,7 @@ import {
 const indexRouter = express.Router();
 
 indexRouter.get('/', indexPage);
-indexRouter.get('/login', loginPage);
+indexRouter.post('/login', loginPage);
 indexRouter.get('/messages', authenticateToken, messagesPage);
 indexRouter.post('/messages', authenticateToken, addMessage);
 

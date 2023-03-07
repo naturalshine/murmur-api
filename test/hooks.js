@@ -30,8 +30,8 @@ import {
   });
   
   after(async () => {
-    await dropTables();
-    await dropSamplesTableCmd();
-    await dropVideosTableCmd();
-    await dropPacksTableCmd();
+    //await dropTables();
+    //await dropSamplesTableCmd();
+    //await dropVideosTableCmd();
+    //await dropPacksTableCmd();
   });

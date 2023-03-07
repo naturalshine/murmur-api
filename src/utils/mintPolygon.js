@@ -2,7 +2,8 @@ require("dotenv").config();
 
 const { ethers } = require('ethers')
 
-const contractABI = require('../abis/polygon-contract-abi.json');
+//const contractABI = require('../abis/polygon-contract-abi.json');
+const contractABI = '';
 
 import { 
         polygonKey, 

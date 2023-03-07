@@ -13,9 +13,9 @@ export const connectTableland = async(network) => {
     let privateKey;
 
     if(network === "maticum"){
-        privateKey = `0x${polygonKey}`;
+        privateKey = `${polygonKey}`;
     } else {
-        privateKey = `0x${ethKey}`;
+        privateKey = `${polygonKey}`;
     }
 
     const wallet = new Wallet(privateKey);
@@ -58,14 +58,15 @@ export const createTable = async (signer, prefix, colString) => {
     }
 }
 
-export const insertTable = async(network, tableName, colString, valString, valArr) => {
+export const insertTable = async(tableName, colString, valString, valArr) => {
     try{
         let privateKey;
+        let network = "maticmum";
 
         if(network === "maticmum"){
-            privateKey = `0x${polygonKey}`;
+            privateKey = `${polygonKey}`;
         } else {
-            privateKey = `0x${ethKey}`;
+            privateKey = `${polygonKey}`;
         }
 
         const wallet = new Wallet(privateKey);
@@ -104,10 +105,11 @@ export const insertTable = async(network, tableName, colString, valString, valAr
 
 }
 
-export const readTable = async(network, tableName, query, valArr) => {
+export const readTable = async(tableName, query, valArr) => {
     try{
 
         console.log("read only " + network);
+        let network = "maticmum";
 
         const db = Database.readOnly(network);
         
