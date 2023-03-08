@@ -52,3 +52,11 @@ export const samplePath = process.env.SAMPLE_PATH
 export const polygonContract = process.env.POLYGON_CONTRACT
 export const ethContract = process.env.ETH_CONTRACT
 export const mintingWallet = process.env.MINTING_WALLET
+
+// contracts & abis
+export const videoContract = process.env.VIDEO_CONTRACT
+export const videoAbi = process.env.VIDEO_ABI
+export const packContract = process.env.PACK_CONTRACT
+export const packAbi = process.env.PACK_ABI
+export const sampleContract = process.env.SAMPLE_CONTRACT
+export const sampleAbi = process.env.SAMPLE_ABI

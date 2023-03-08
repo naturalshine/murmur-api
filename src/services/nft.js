@@ -17,7 +17,14 @@ import {
         samplePath,
         tablelandSampleName, 
         tablelandVideoName, 
-        tablelandPackName } from '../settings';
+        tablelandPackName,
+        videoContract,
+        videoAbi,
+        packContract,
+        packAbi,
+        sampleContract,
+        sampleAbi
+      } from '../settings';
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -41,7 +48,7 @@ export const createNft = async (metadata, modelName) => {
           tableName = tablelandSampleName;
         } else {
           files.push(staticPath + metadata.file + ".png")
-          files.push(staticPath + metadata.file + ".mp3")
+          files.push(staticPath + metadata.file + ".wav")
           files.push(staticPath + metadata.file + ".mp4")
           tableName = tablelandVideoName;
         }
@@ -116,18 +123,15 @@ export const createNft = async (metadata, modelName) => {
         console.log(data.rows);
         
         const nftUri = `SELECT * FROM ${tableName} WHERE id = ${metadata.tablelandId}`;
-        /*
+        
         let tokenId 
-        if(modelName == 'videos'){
-          tokenId = await mintEthToken(nftUri)
-        } else {
-          tokenId = await mintPolygonToken(nftUri)
-        }
+
+        tokenId = await mintPolygonToken(nftUri)
         
         // Store TokenId 
         const tokenString = "tokenId = '" + tokenId.message + "'";
         const tokenInsert = await nftModel.update(tokenString, data.rows[0].id);
-        */
+        
         return{
             status: true,
             //message: tokenInsert.rows

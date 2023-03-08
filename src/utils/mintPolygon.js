@@ -3,16 +3,14 @@ require("dotenv").config();
 const { ethers } = require('ethers')
 
 //const contractABI = require('../abis/polygon-contract-abi.json');
-const contractABI = '';
 
 import { 
         polygonKey, 
         polygonChain, 
         infuraKey, 
-        polygonContract, 
         mintingWallet } from '../settings'
 
-export const mintPolygonToken = async(sqlString) => {
+export const mintPolygonToken = async(sqlString, contract, abiPath) => {
     try{
         const wallet = new ethers.Wallet(polygonKey);
         const provider = new ethers.providers.InfuraProvider(polygonChain, infuraKey)
@@ -21,8 +19,8 @@ export const mintPolygonToken = async(sqlString) => {
         const signer = wallet.connect(provider);
     
         const nft = new ethers.Contract(
-            polygonContract,
-            contractABI,
+            contract,
+            abiPath,
             signer
         );
 

@@ -7,3 +7,5 @@ coverage
 build/
 yarn-error.log
 src/resources/*
+artifacts/
+cache/

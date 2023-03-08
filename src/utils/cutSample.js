@@ -36,7 +36,7 @@ const doCut = async(filePath, start, end, i) => {
                             if (!error){
                               console.log('sample audio: ' + file);
                             } else {
-                              console.log("ERROR!!");
+                              console.log("ERROR!");
                               console.log(error)
                             }
                           });
@@ -48,7 +48,7 @@ const doCut = async(filePath, start, end, i) => {
                       })
                       
                 }else{
-                  console.log("ERROR!!!! ");
+                  console.log("ERROR!");
                   console.log(error)
                 }
               })
