@@ -1,3 +1,5 @@
+// psql table creation scripts
+
 export const createMessageTable = `
 DROP TABLE IF EXISTS messages;
 CREATE TABLE IF NOT EXISTS messages (

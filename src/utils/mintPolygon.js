@@ -1,8 +1,5 @@
-require("dotenv").config();
-
+// generic minting function for polygon nfts
 const { ethers } = require('ethers')
-
-//const contractABI = require('../abis/polygon-contract-abi.json');
 
 import { 
         polygonKey, 
@@ -10,7 +7,7 @@ import {
         infuraKey, 
         mintingWallet } from '../settings'
 
-export const mintPolygonToken = async(sqlString, contract, abiPath) => {
+export const mintPolygonToken = async(tablelandId, contract, abiPath) => {
     try{
         const wallet = new ethers.Wallet(polygonKey);
         const provider = new ethers.providers.InfuraProvider(polygonChain, infuraKey)
@@ -27,7 +24,7 @@ export const mintPolygonToken = async(sqlString, contract, abiPath) => {
         let tokenId;
 
         await nft
-            .mint(mintingWallet, sqlString)
+            .mint(tablelandId)
             .then((tx) => tx.wait(5))
             .then((receipt) => {
                 console.log(`Confirmed! Your transaction receipt is: ${receipt.transactionHash}`)

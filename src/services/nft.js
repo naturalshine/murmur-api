@@ -1,21 +1,30 @@
+// main service: fomat metadata, send files to web3.storage, create tableland entry, 
+// mint token & return id
+// TODO: break into microservices
+
 import MurmurModel from "../models/murmur.model";
+
 import { createColValArr, 
         createTablelandVars, 
         createColString, 
         createQueryString } from "../utils/queryHelper"
-import { uploadToWeb3Storage, retrieveHash } from "../utils/storeMedia";
+
+        import { uploadToWeb3Storage, retrieveHash } from "../utils/storeMedia";
+
 import { 
   connectTableland, 
   createTable, 
   insertTable, 
   readTable, 
   updateTable } from '../utils/tableland';
-import { mintEthToken } from '../utils/mintEth';
+
 import { mintPolygonToken } from '../utils/mintPolygon'
+
 import {
         staticPath, 
         samplePath,
         tablelandSampleName, 
+        tablelandChain,
         tablelandVideoName, 
         tablelandPackName,
         videoContract,
@@ -32,34 +41,37 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 export const createNft = async (metadata, modelName) => {
 
     try {
+        
         const nftModel = new MurmurModel(modelName);
 
         metadata.file = metadata.file.split('.')[0];
 
         let files = []
-        let tableName;
+        let tableName, contract, abiString;
 
+        // prepare different file array for web3.storage depending on 
+        // nft being minted
         if(modelName === 'packs'){
           files.push(staticPath + metadata.file + ".png")
           tableName = tablelandPackName;
+          contract = videoContract;
+          abiString = videoAbi;
         } else if (modelName === 'samples'){
           files.push(staticPath + metadata.file + ".png")
-          files.push(samplePath + metadata.file + ".mp3")
+          files.push(samplePath + metadata.file + metadata.index + ".mp3")
           tableName = tablelandSampleName;
+          contract = sampleContract;
+          abiString = sampleAbi;
         } else {
           files.push(staticPath + metadata.file + ".png")
           files.push(staticPath + metadata.file + ".wav")
           files.push(staticPath + metadata.file + ".mp4")
           tableName = tablelandVideoName;
+          contract = packContract;
+          abiString = packAbi;
         }
-   
-    
-        // TODO TESTING --> REMOVE THIS (Timeout)
         
-        /*const nftCid = {
-          message: "bafybeihs2kflvvetotocyguobltz2ogquawfntvxr3sjwmxf66kf2wahfu"
-        }*/
-        
+        // call to web3.storage to upload file arr
         const nftCid = await uploadToWeb3Storage(files);
         if(!nftCid.success){
           console.log(nftCid.message);
@@ -68,41 +80,45 @@ export const createNft = async (metadata, modelName) => {
 
         console.log("NFT CID", nftCid);
 
-        
-        //metadata.image = nftCid.message + "/" + metadata.file + ".png";
+        // retrieve file-specific hashes from directory CID
         metadata.image = await retrieveHash(nftCid, metadata.file + ".png")
 
         if(files.length > 1){
-          //metadata.audio = nftCid.message + "/" + metadata.file + ".wav";
-          metadata.audio = await retrieveHash(nftCid, metadata.file + ".mp3")
+          metadata.audio = await retrieveHash(nftCid, metadata.file + metadata.index + ".mp3")
 
         }
         if (files.length > 2){
-          //metadata.video = nftCid.message + "/" + metadata.file + ".mp4";
           metadata.video = await retrieveHash(nftCid, metadata.file + ".mp4");
         }
 
+        // create tableland metadata
         const tablelandData = await createMetadata(metadata, modelName);
         
+        // get correctly formatted sql strings for insert operation
+        const [tColString, tValString] = await createTablelandVars(tablelandData);
+        
+        // create tableland metadata entry
+        const createTablelandReturn = await createTablelandEntry(tColString, tValString, tableName);
+        console.log("CREATE TABLELAND =>", createTablelandReturn.message);
+        
+        // latency catch
+        console.log("Waiting 20s after Tableland...");
+        await delay(20000)
+
+        // create read query for tableland
+        // our insert function doesn't return an id so we 
+        // have to query tableland with data we know is unique
         const query = {
-            name: tablelandData.name, 
-            image: tablelandData.image
+          name: tablelandData.name, 
+          image: tablelandData.image
         }
         
         const [queryString, valArr] = await createQueryString(query);
 
-        const [tColString, tValString] = await createTablelandVars(tablelandData);
-        
-        const createTablelandReturn = await createTablelandEntry(tColString, tValString, tableName);
-        console.log("CREATE TABLELAND =>", createTablelandReturn.message);
-        
-        console.log("Waiting 20s after Tableland...");
-        await delay(20000)
-
+        // read tableland table and return id
         const readTablelandReturn = await readTablelandTable(queryString, valArr, tableName);
         console.log("READ MESSAGE =>", readTablelandReturn.message);
         
-        //TODO: store token id from tableland return
         metadata.tablelandId = readTablelandReturn.message[0].id
         
         // local db storage data transformation
@@ -122,13 +138,11 @@ export const createNft = async (metadata, modelName) => {
         console.log("NFT");
         console.log(data.rows);
         
-        const nftUri = `SELECT * FROM ${tableName} WHERE id = ${metadata.tablelandId}`;
-        
+        // mint polygon token
         let tokenId 
-
-        tokenId = await mintPolygonToken(nftUri)
+        tokenId = await mintPolygonToken(metadata.tablelandId, contract, abiString)
         
-        // Store TokenId 
+        // Store tokenId in database 
         const tokenString = "tokenId = '" + tokenId.message + "'";
         const tokenInsert = await nftModel.update(tokenString, data.rows[0].id);
         
@@ -199,10 +213,9 @@ export const readTablelandTable = async(query, valArr, tablelandName) => {
 }
 
 // UPDATE tableland entry
-export const updateTablelandTable = async(insertCol, insertVal, query, tablelandChain, tablelandName) => {
+export const updateTablelandTable = async(insertCol, insertVal, valArr, query, tablelandName) => {
   try{
-      const signer = await connectTableland(tablelandChain);
-      const updateTableland = await updateTable(signer, tablelandName, signer, insertCol, insertVal, query);
+      const updateTableland = await updateTable(tablelandName, insertCol, insertVal, valArr, query);
       if(!updateTableland.status){
           throw new Error("Updating Tableland failed: ", updateTableland.message);
       }

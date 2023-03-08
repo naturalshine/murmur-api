@@ -1,3 +1,5 @@
+//sampling functions
+
 import path from 'path';
 import ffmpeg  from 'ffmpeg';
 

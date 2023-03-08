@@ -1,3 +1,5 @@
+// tableland helper functions
+
 import { Wallet, providers } from "ethers";
 import { NonceManager } from "@ethersproject/experimental";
 import { Database, helpers } from "@tableland/sdk";
@@ -5,7 +7,8 @@ import { Database, helpers } from "@tableland/sdk";
 import { 
     polygonKey, 
     ethKey,
-    infuraKey
+    infuraKey,
+    tablelandChain
  } from '../settings';
 
 // connection function
@@ -61,7 +64,7 @@ export const createTable = async (signer, prefix, colString) => {
 export const insertTable = async(tableName, colString, valString, valArr) => {
     try{
         let privateKey;
-        let network = "maticmum";
+        let network = tablelandChain;
 
         if(network === "maticmum"){
             privateKey = `${polygonKey}`;
@@ -108,8 +111,7 @@ export const insertTable = async(tableName, colString, valString, valArr) => {
 export const readTable = async(tableName, query, valArr) => {
     try{
 
-        console.log("read only " + network);
-        let network = "maticmum";
+        let network = tablelandChain;
 
         const db = Database.readOnly(network);
         
@@ -142,9 +144,23 @@ export const readTable = async(tableName, query, valArr) => {
 
 }
 
-export const updateTable = async(signer, tableName, insertCol, valString, valArr, query) =>{
+export const updateTable = async(tableName, insertCol, valString, valArr, query) =>{
     try{
-        const db = new Database({ signer });
+        let privateKey;
+        let network = tablelandChain;
+
+        if(network === "maticmum"){
+            privateKey = `${polygonKey}`;
+        } else {
+            privateKey = `${polygonKey}`;
+        }
+
+        const wallet = new Wallet(privateKey);
+
+        const provider = new providers.InfuraProvider(network, infuraKey);
+
+        const baseSigner = wallet.connect(provider);
+        const signer = new NonceManager(baseSigner);
 
         // Insert a row into the table
         const { success, meta } = await db

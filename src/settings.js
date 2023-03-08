@@ -23,18 +23,17 @@ export const jwtExpireTime = process.env.JWT_EXPIRE_TIME;
 export const web3StorageToken = process.env.WEB3_STORAGE;
 
 // tableland
+export const tablelandChain = process.env.TABLELAND_SAMPLE_CHAIN
+
 //VIDEO
-export const tablelandVideoChain = process.env.TABLELAND_VIDEO_CHAIN
 export const tablelandVideoName = process.env.TABLELAND_VIDEO_NAME
 export const tablelandVideoPrefix = process.env.VIDEO_PREFIX
 
 //packs
-export const tablelandPackChain = process.env.TABLELAND_PACK_CHAIN
 export const tablelandPackName = process.env.TABLELAND_PACK_NAME
 export const tablelandPackPrefix = process.env.TABLELAND_PACK_PREFIX
 
 //samples
-export const tablelandSampleChain = process.env.TABLELAND_SAMPLE_CHAIN
 export const tablelandSampleName = process.env.TABLELAND_SAMPLE_NAME
 export const tablelandSamplePrefix = process.env.TABLELAND_SAMPLE_PREFIX
 

@@ -1,3 +1,5 @@
+// web3.storage helper functions
+
 import { Web3Storage, getFilesFromPath } from 'web3.storage';
 import { web3StorageToken } from '../settings';
 import axios from 'axios';

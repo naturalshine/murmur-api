@@ -117,8 +117,8 @@ describe('Samples', () => {
             'audio': 'text',
             'image': 'text', 
             'decimals': 'int',
-            'sample_pack': 'text',
-            'video': 'text',
+            'video_id': 'int',
+            'pack_id': 'int',
             'attributes': 'text'
           };
     server
@@ -137,6 +137,7 @@ describe('Samples', () => {
       description: 'sample description', 
       image: '',
       audio: '',
+      index: 1,
       file: 'deer',      
       authorship: [{
           created_by: [

@@ -1,3 +1,4 @@
+// helper functions for constructing sql queries and statements
 
 export const createQueryString = async (data) => {
     // data is an object

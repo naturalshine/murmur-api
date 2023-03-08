@@ -25,7 +25,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// adding Helmet to enhance your API's security
 app.use(helmet());
 
 // enabling CORS for all requests
