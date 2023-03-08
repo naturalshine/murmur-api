@@ -294,6 +294,8 @@ export const createMetadata = async (metadata, tableName) => {
     ];
   } else if (tableName === 'samples'){
     newMetadata.audio = metadata.audio;
+    newMetadata.video_id = metadata.tablelandPackId;
+    newMetadata.pack_id = metadata.tablelandVideoId;
 
     attributes = [
         {

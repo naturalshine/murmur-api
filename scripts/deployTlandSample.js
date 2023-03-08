@@ -13,7 +13,9 @@ async function main() {
 	const [signer] = await ethers.getSigners()
 	console.log(`\nDeploying to network '${network.name}' with account ${signer.address}`)
 
-    const mainName = 'samples_80001_5722'
+    const sampleTable = 'samples_80001_5722';
+	const videoTable = 'videos_80001_5772';
+	const packTable = 'packs_80001_5721';
 	// Set the Tableand gateway as the `baseURI` where a `tokenId` will get appended upon `tokenURI` calls
 	// Note that `mode=list` will format the metadata per the ERC721 standard
 	const tablelandBaseURI = `https://testnets.tableland.network/query?mode=list&s=`
@@ -21,7 +23,7 @@ async function main() {
 	const SampleNFT = await ethers.getContractFactory("Pack")
 	// Deploy the contract, passing `tablelandBaseURI` in the constructor's `baseURI` and using the Tableland gateway
 	// Also, pass the table's `name` to write to storage in the smart contract
-	const sampleNFT = await SampleNFT.deploy(tablelandBaseURI, mainName)
+	const sampleNFT = await SampleNFT.deploy(tablelandBaseURI, sampleTable, videoTable, packTable)
 	// For contract verification purposes, wait for 5 confirmations before proceeeding
 	// Otherwise, just use `await twoTablesNFT.deployed()`
 	await sampleNFT.deployTransaction.wait(5)

@@ -19,6 +19,8 @@ contract Sample is ERC721, ERC721URIStorage {
     /// The name of the main metadata table in Tableland
     // Schema: id int primary key, name text, description text, image text
     string public mainTable;
+    string public videoTable;
+    string public packTable;
     /// The name of the attributes table in Tableland
     // Schema: main_id int not null, trait_type text not null, value text
     //string public attributesTable;
@@ -38,7 +40,9 @@ contract Sample is ERC721, ERC721URIStorage {
      */
     constructor(
         string memory baseURI,
-        string memory _mainTable
+        string memory _mainTable,
+        string memory _videoTable,
+        string memory _packTable
         //string memory _attributesTable
     ) ERC721("SampleNFT", "SNFT") {
         // Initialize with token counter at zero
@@ -49,6 +53,8 @@ contract Sample is ERC721, ERC721URIStorage {
         baseURIString = baseURI;
         // Set the table names
         mainTable = _mainTable;
+        videoTable = _videoTable;
+        packTable = _packTable;
         //attributesTable = _attributesTable;
     }
 
@@ -67,71 +73,81 @@ contract Sample is ERC721, ERC721URIStorage {
     }
 
     /**
-     *  @dev Must override the default implementation, which simply appends a `tokenId` to _baseURI.
-     *  tokenId - The id of the NFT token that is being requested
+     *  @dev Overrides both tokenURI functions in 721/URI Storage. 
+     * Looks up URI via _tokenURIs * map created in ERC721URIStorage.
+     * 
+     *  @param tokenId - The id of the NFT token that is being requested
      */
     function tokenURI(uint256 tokenId) public view virtual override(ERC721, ERC721URIStorage) returns (string memory) {
         require(
             _exists(tokenId),
             "ERC721Metadata: URI query for nonexistent token"
         );
-        string memory baseURI = _baseURI();
 
-        if (bytes(baseURI).length == 0) {
-            return "";
-        }
+        string memory storedTokenURI = _tokenURIs[tokenId];
 
-        /**
-         *   A SQL query to JOIN two tables to compose the metadata accross a 'main' and 'attributes' table
-         *
-         *   SELECT json_object(
-         *       'id', id,
-         *       'name', name,
-         *       'description', description,
-         *       'image', image,
-         *       'attributes', json_group_array(
-         *           json_object(
-         *               'trait_type',trait_type,
-         *               'value', value
-         *           )
-         *       )
-         *   )
-         *   FROM {mainTable} JOIN {attributesTable}
-         *       ON {mainTable}.id = {attributesTable}.main_id
-         *   WHERE id = <main_id>
-         *   GROUP BY id
-        */
-        string memory query = string(
-            abi.encodePacked(
-                "SELECT%20json_object%28%27id%27%2Cid%2C%title%27%2Ctitle%2C%27description%27%2Cdescription%2C%27image%27%2Cimage%2C%%27audio%27%2Caudio%2C%%27attributes%27%2Cjson_group_array%28json_object%28%27trait_type%27%2Ctrait_type%2C%27value%27%2Cvalue%29%29%29%20FROM%20",
-                mainTable,"%20WHERE%20id%3D"
-            )
-        );
-        /*
-                        "%20JOIN%20",
-                attributesTable,
-                "%20ON%20",
-                mainTable,
-                "%2Eid%20%3D%20",
-                attributesTable,
-                "%2Emain_id%20WHERE%20id%3D"
-        */
         // Return the baseURI with a query string, which looks up the token id in a row.
         // `&mode=list` formats into the proper JSON object expected by metadata standards.
-        return
-            string(
-                abi.encodePacked(
-                    baseURI,
-                    query,
-                    Strings.toString(tokenId)
-                )
-            );
+        return storedTokenURI;
     }
 
     /**
-     * @dev Mint an NFT, incrementing the `_tokenIdCounter` upon each call.
+     * 
+     * @param tokenId unique id of the NFT
+     * @param tablelandId id of the tableland row corresponding to the token metadata
+     * 
+     * @dev sets the token URI to Tableland-compliant SQL string
+     * 
      */
-    function mint(string memory uri) public {
+
+    function _setTokenURI(uint256 tokenId, uint256 tablelandId) internal virtual {
+        require(_exists(tokenId), "ERC721URIStorage: URI set of nonexistent token");
+        
+        string memory baseURI = _baseURI();
+
+        string memory query = string(
+            abi.encodePacked(
+                'SELECT%20json_object%28%27id%27%2Cid%2C%27title%27%2C%title%2C%27description%27%2Cdescription%2C%27image%27%2Cimage%2C%27audio%27%2Caudio%2C%29%20FROM%20',
+                mainTable,
+                '%20JOIN%20',
+                videoTable,
+                '%20ON%20',
+                mainTable,
+                '.video_id%20%3D%20',
+                videoTable,
+                '.id%20JOIN%20',
+                packTable,
+                '%20ON%20',
+                mainTable,
+                '.pack_id%20%3D%20',
+                packTable,
+                '.id%20WHERE%20id%20%3D%20',
+                tablelandId        
+            )
+        
+        );
+
+        string memory tokenString = string(
+                                        abi.encodePacked(
+                                            baseURI,
+                                            query                                        
+                                        )
+                                    );
+
+
+
+        _tokenURIs[tokenId] = tokenString;
+    }
+
+
+    /**
+     * @param tablelandId id of the tableland row corresponding to the token metadata
+     * 
+     * @dev Mint an NFT, incrementing the `_tokenIdCounter` upon each call.
+     * Create stored tokenURI using incoming tablelandId for lookup
+     * 
+     */
+    function mint(uint256 tablelandId) public {
         require(
             _tokenIdCounter < _maxTokens,
             "Maximum number of tokens have been minted"
@@ -139,7 +155,7 @@ contract Sample is ERC721, ERC721URIStorage {
         uint256 tokenId = _tokenIdCounter;
         _tokenIdCounter++;
         _safeMint(msg.sender, tokenId);
-        _setTokenURI(tokenId, uri);
+        _setTokenURI(tokenId, tablelandId);
     }
 
     /**
