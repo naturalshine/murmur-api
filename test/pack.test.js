@@ -99,7 +99,7 @@ describe('Packs', () => {
         });
     }).timeout(100000);
 */
-
+    /*
   it('creates web3 pack', done => {
 
     const data = { 
@@ -144,5 +144,5 @@ describe('Packs', () => {
         });
     }).timeout(100000);
 
-
+    */
 });

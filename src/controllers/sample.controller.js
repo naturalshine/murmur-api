@@ -17,7 +17,7 @@ const sampleModel = new MurmurModel('samples');
 
 export const getSamples = async (req, res) => {
     try {
-      const data = await sampleModel.select('id, title, description');
+      const data = await sampleModel.select('id, title, description, audio');
       res.status(200).json({
         messages: data.rows
       });
@@ -44,6 +44,24 @@ export const getSingleSample = async (req, res) => {
       });
     }
   };
+
+/**
+ * Return samples affiliated with a sample pack
+ * 
+ */
+
+export const getPackSamples = async (req, res) => {
+  try {
+    const data = await sampleModel.selectByColumn(`id,title,description,audio`, req.params.id, req.params.packColumn);
+    res.status(200).json({
+      message: data.rows
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.stack
+    });
+  }
+};
 
 
 

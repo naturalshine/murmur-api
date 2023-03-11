@@ -28,11 +28,8 @@ import {
         tablelandVideoName, 
         tablelandPackName,
         videoContract,
-        videoAbi,
         packContract,
-        packAbi,
         sampleContract,
-        sampleAbi
       } from '../settings';
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -54,41 +51,50 @@ export const createNft = async (metadata, modelName) => {
         if(modelName === 'packs'){
           files.push(staticPath + metadata.file + ".png")
           tableName = tablelandPackName;
-          contract = videoContract;
-          abiString = videoAbi;
+          contract = packContract;
         } else if (modelName === 'samples'){
           files.push(staticPath + metadata.file + ".png")
           files.push(samplePath + metadata.file + metadata.index + ".mp3")
           tableName = tablelandSampleName;
           contract = sampleContract;
-          abiString = sampleAbi;
         } else {
           files.push(staticPath + metadata.file + ".png")
           files.push(staticPath + metadata.file + ".wav")
           files.push(staticPath + metadata.file + ".mp4")
           tableName = tablelandVideoName;
-          contract = packContract;
-          abiString = packAbi;
+          contract = videoContract;
         }
         
+        let nftCid;
+
+
         // call to web3.storage to upload file arr
-        const nftCid = await uploadToWeb3Storage(files);
+        nftCid = await uploadToWeb3Storage(files);
         if(!nftCid.success){
           console.log(nftCid.message);
           throw new Error('Web3 Storage Failed: ' + nftCid.message);
         }
 
         console.log("NFT CID", nftCid);
+        
 
         // retrieve file-specific hashes from directory CID
-        metadata.image = await retrieveHash(nftCid, metadata.file + ".png")
+        if (modelName == 'videos'){
+          metadata.image = 'bafybeie7meaooj4jgigia4lduwfv56da2q4fe42u2rtkmfpzwwd3ogdjce'
+        } else {
+          metadata.image = await retrieveHash(nftCid, metadata.file + ".png")
+        }
 
         if(files.length > 1){
-          metadata.audio = await retrieveHash(nftCid, metadata.file + metadata.index + ".mp3")
-
+          if(modelName == 'videos'){
+            metadata.audio = 'bafybeihza4ulpznvwy6zm2v4pq5cxyi4jrij2ccwxnwvfpbhyi5mzez27i'
+          } else{
+            metadata.audio = await retrieveHash(nftCid, metadata.file + metadata.index + ".mp3")
+          }
         }
         if (files.length > 2){
-          metadata.video = await retrieveHash(nftCid, metadata.file + ".mp4");
+          //metadata.video = await retrieveHash(nftCid, metadata.file + ".mp4");
+          metadata.video = 'bafybeid4dnrbedu3h6j2j7liawuwta3jchwqcq4oson2qfjmfrwkp6omsm'
         }
 
         // create tableland metadata
@@ -96,6 +102,8 @@ export const createNft = async (metadata, modelName) => {
         
         // get correctly formatted sql strings for insert operation
         const [tColString, tValString] = await createTablelandVars(tablelandData);
+        console.log("TABLELAND COLUMN =>", tColString);
+        console.log("TABLELAND VALUES =>", tValString);
         
         // create tableland metadata entry
         const createTablelandReturn = await createTablelandEntry(tColString, tValString, tableName);
@@ -140,15 +148,18 @@ export const createNft = async (metadata, modelName) => {
         
         // mint polygon token
         let tokenId 
-        tokenId = await mintPolygonToken(metadata.tablelandId, contract, abiString)
+        tokenId = await mintPolygonToken(metadata.tablelandId, contract, modelName)
         
+        console.log("TOKEN ID =>", tokenId)
+
         // Store tokenId in database 
         const tokenString = "tokenId = '" + tokenId.message + "'";
         const tokenInsert = await nftModel.update(tokenString, data.rows[0].id);
         
+        console.log("TOKEN INSERT =>", tokenInsert.rows);
+
         return{
             status: true,
-            //message: tokenInsert.rows
             message: data.rows
         };
       } catch (err) {
@@ -167,8 +178,7 @@ export const createNft = async (metadata, modelName) => {
 export const createTableTableland = async(prefix, data, tablelandChain) => {
   try{
         let colString = await createColString(data);
-        const signer = await connectTableland(tablelandChain);
-        const createTablelandTable = await createTable(signer, prefix, colString);
+        const createTablelandTable = await createTable(prefix, colString);
         if(!createTablelandTable.status){
             throw new Error("Creating table failed: ", createTablelandTable.message)
         }
@@ -307,8 +317,8 @@ export const createMetadata = async (metadata, tableName) => {
     ];
   } else if (tableName === 'samples'){
     newMetadata.audio = metadata.audio;
-    newMetadata.video_id = metadata.tablelandPackId;
-    newMetadata.pack_id = metadata.tablelandVideoId;
+    newMetadata.video_id = metadata.video_id;
+    newMetadata.pack_id = metadata.pack_id;
 
     attributes = [
         {

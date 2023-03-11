@@ -13,6 +13,13 @@ class MurmurModel {
         return this.pool.query(query);
     }
 
+    async selectByColumn(columns, clause, clauseColumn) {
+        let query = `SELECT ${columns} FROM ${this.table}`;
+        if (clause) query += `WHERE ${clauseColumn} = ${clause}`;
+        return this.pool.query(query);
+    }
+
+
     async insertWithReturn(columns, values) {
 
         const query = `

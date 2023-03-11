@@ -3,23 +3,48 @@ const { ethers } = require('ethers')
 
 import { 
         polygonKey, 
-        polygonChain, 
         infuraKey, 
-        mintingWallet } from '../settings'
+        tablelandChain
+     } from '../settings'
 
-export const mintPolygonToken = async(tablelandId, contract, abiPath) => {
+const sampleAbi = require('../abis/sample-abi.json');
+const packAbi = require('../abis/pack-abi.json');
+const videoAbi = require('../abis/video-abi.json');
+
+export const mintPolygonToken = async(tablelandId, contract, modelName) => {
     try{
-        const wallet = new ethers.Wallet(polygonKey);
-        const provider = new ethers.providers.InfuraProvider(polygonChain, infuraKey)
+        console.log("POLYGON CHAIN =>", tablelandChain);
+        console.log("TABLELAND ID =>", tablelandId);
+        console.log("CONTRACT =>", contract);
 
-        wallet.provider = provider;
-        const signer = wallet.connect(provider);
-    
+        let abi;
+        if(modelName == 'samples'){
+            abi = sampleAbi;
+        }else if (modelName == 'packs'){
+            abi = packAbi;
+        } else{
+            abi = videoAbi;
+        }
+        const polygonWallet = new ethers.Wallet(polygonKey);
+        console.log("WALLET =>", polygonWallet)
+        const polygonProvider = new ethers.providers.InfuraProvider(tablelandChain, infuraKey)
+        console.log("PROVIDER =>", polygonProvider);
+
+        //polygonWallet.provider = polygonProvider;
+
+        console.log("POST WALLET PROVIDER")
+        
+        const polygonSigner = polygonWallet.connect(polygonProvider);
+        
+        console.log("SIGNER =>", polygonSigner);
+
         const nft = new ethers.Contract(
             contract,
-            abiPath,
-            signer
+            abi,
+            polygonSigner
         );
+
+        console.log("NFT CONTRACT =>", nft)
 
         let tokenId;
 

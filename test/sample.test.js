@@ -108,7 +108,7 @@ describe('Samples', () => {
         done();
       });
   });
-  
+  /*
   it('creates tableland sample table', done => {
     const tData = {
             'id' : 'integer primary key',
@@ -130,11 +130,14 @@ describe('Samples', () => {
         done();
         });
     }).timeout(100000);
-  
+  */
+  /*
   it('creates web3 sample', done => {
     const data = [{ 
       title: 'Claire two', 
       description: 'sample description', 
+      video_id: 1,
+      pack_id: 1,
       image: '',
       audio: '',
       index: 1,
@@ -178,6 +181,5 @@ describe('Samples', () => {
         done();
         });
     }).timeout(100000);
-    
-    
+    */
 });

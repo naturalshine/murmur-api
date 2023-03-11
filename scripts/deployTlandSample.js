@@ -20,7 +20,7 @@ async function main() {
 	// Note that `mode=list` will format the metadata per the ERC721 standard
 	const tablelandBaseURI = `https://testnets.tableland.network/query?mode=list&s=`
 	// Get the contract factory to create an instance of the  TwoTablesNFT contract
-	const SampleNFT = await ethers.getContractFactory("Pack")
+	const SampleNFT = await ethers.getContractFactory("Sample")
 	// Deploy the contract, passing `tablelandBaseURI` in the constructor's `baseURI` and using the Tableland gateway
 	// Also, pass the table's `name` to write to storage in the smart contract
 	const sampleNFT = await SampleNFT.deploy(tablelandBaseURI, sampleTable, videoTable, packTable)

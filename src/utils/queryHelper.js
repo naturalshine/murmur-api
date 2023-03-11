@@ -51,10 +51,17 @@ export const createTablelandVars = async(data) => {
     colsArr.forEach(function (item, index) {
         if (index == 0){
             colString = item;
+
             valString = "'" + data[item] + "'"
         } else {
-            colString = colString + ", " + item
-            valString = valString + ", '" + data[item] + "'"
+            if (item == "video_id" || item == "pack_id"){
+                colString = colString + ", " + item
+                valString = valString + ", " + data[item]
+            } else {
+                colString = colString + ", " + item
+                valString = valString + ", '" + data[item] + "'"
+            }
+
         }
         
     });

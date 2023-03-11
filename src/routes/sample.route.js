@@ -9,7 +9,8 @@ import {
     deleteAllSamples,
     createSampleNft,
     tablelandSampleTable,
-    createSample
+    createSample,
+    getPackSamples
   } from "../controllers/sample.controller";
 
 import { authenticateToken } from "../middleware/auth";
@@ -18,6 +19,8 @@ import { authenticateToken } from "../middleware/auth";
 const sampleRouter = express.Router();
 
 sampleRouter.get("/samples", authenticateToken, getSamples);
+
+sampleRouter.get("/samples/pack", authenticateToken, getPackSamples);
 
 sampleRouter.get("/samples/:id", authenticateToken, getSingleSample);
 

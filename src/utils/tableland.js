@@ -33,8 +33,25 @@ export const connectTableland = async(network) => {
 
 
 // create table
-export const createTable = async (signer, prefix, colString) => {
+export const createTable = async (prefix, colString) => {
     try{
+
+        let privateKey;
+        let network = tablelandChain;
+
+        if(network === "maticum"){
+            privateKey = `${polygonKey}`;
+        } else {
+            privateKey = `${polygonKey}`;
+        }
+    
+        const wallet = new Wallet(privateKey);
+        
+        const provider = new providers.InfuraProvider(network, infuraKey);
+    
+        const baseSigner = wallet.connect(provider);
+        const signer = new NonceManager(baseSigner);
+
         const db = new Database({
           signer
         });

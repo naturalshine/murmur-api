@@ -16,7 +16,7 @@ const packModel = new MurmurModel('packs');
 
 export const getPacks = async (req, res) => {
     try {
-      const data = await packModel.select('id, title, description');
+      const data = await packModel.select('id, title, description, image');
       res.status(200).json({
         messages: data.rows
       });

@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS samples (
   tablelandId INT,
   tablelandPackId INT, 
   tablelandVideoId INT,
+  index INT,
   title TEXT DEFAULT '',
   description TEXT DEFAULT '',
   image TEXT DEFAULT '', 

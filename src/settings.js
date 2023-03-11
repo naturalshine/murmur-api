@@ -2,12 +2,11 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const testEnvironmentVariable = 
-process.env.TEST_ENV_VARIABLE;
-
+// general 
 export const nodeEnv = process.env.NODE_ENV;
 export const baseUrl = process.env.BASE_URL;
 export const staticPath = process.env.STATIC_PATH;
+export const samplePath = process.env.SAMPLE_PATH;
 
 //postgres
 export const connectionString = process.env.CONNECTION_STRING;
@@ -29,11 +28,11 @@ export const tablelandChain = process.env.TABLELAND_SAMPLE_CHAIN
 export const tablelandVideoName = process.env.TABLELAND_VIDEO_NAME
 export const tablelandVideoPrefix = process.env.VIDEO_PREFIX
 
-//packs
+//PACKS
 export const tablelandPackName = process.env.TABLELAND_PACK_NAME
 export const tablelandPackPrefix = process.env.TABLELAND_PACK_PREFIX
 
-//samples
+//SAMPLES
 export const tablelandSampleName = process.env.TABLELAND_SAMPLE_NAME
 export const tablelandSamplePrefix = process.env.TABLELAND_SAMPLE_PREFIX
 
@@ -43,11 +42,6 @@ export const ethKey = process.env.ETH_KEY
 export const infuraKey = process.env.INFURA_KEY
 export const ethChain = process.env.ETH_CHAIN
 export const polygonChain = process.env.POLYGON_CHAIN
-
-// createSamples
-export const samplePath = process.env.SAMPLE_PATH
-
-// chains
 export const polygonContract = process.env.POLYGON_CONTRACT
 export const ethContract = process.env.ETH_CONTRACT
 export const mintingWallet = process.env.MINTING_WALLET
