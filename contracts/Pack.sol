@@ -102,9 +102,9 @@ contract Pack is ERC721, ERC721URIStorage {
 
         string memory query = string(
             abi.encodePacked(
-                'SELECT%20json_object%28%27id%27%2Cid%2C%27name%27%2Cname%2C%27description%27%2Cdescription%2C%27image%27%2Cimage%2C%29%20FROM%20',
+                'SELECT%20json_object%28%27id%27%2Cid%2C%27name%27%2Cname%2C%27description%27%2Cdescription%2C%27image%27%2Cimage%29%20FROM%20',
                 mainTable,
-                '%2Eid%20WHERE%20id%20%3D%20',
+                '%20WHERE%20id%20%3D%20',
                 tablelandId        
             )
         

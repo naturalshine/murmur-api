@@ -107,7 +107,7 @@ contract Sample is ERC721, ERC721URIStorage {
 
         string memory query = string(
             abi.encodePacked(
-                'SELECT%20json_object%28%27id%27%2Cid%2C%27name%27%2Cname%2C%27description%27%2Cdescription%2C%27image%27%2Cimage%2C%27audio%27%2Caudio%2C%29%20FROM%20',
+                'SELECT%20json_object%28%27id%27%2Cid%2C%27name%27%2Cname%2C%27description%27%2Cdescription%2C%27image%27%2Cimage%2C%27audio%27%2Caudio%29%20FROM%20',
                 mainTable,
                 '%20JOIN%20',
                 videoTable,
